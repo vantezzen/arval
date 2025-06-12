@@ -1,0 +1,23 @@
+{
+  "$schema": "../public/schemas/acs.schema.json",
+  "name": "Sitzbank",
+  "scope": "object",
+  "tags": ["bench", "furniture", "seat"],
+
+  "transform": [
+    {
+      "action": "allow-only",
+      "subject": "rotation",
+      "axes": ["y"]
+    }
+  ],
+
+  "placement": [
+    {
+      "action": "forbid",
+      "subject": "underground",
+      "tags": ["asphalted"],
+      "reason": "auf einem Weg platziert werden"
+    }
+  ]
+}

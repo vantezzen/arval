@@ -1,0 +1,131 @@
+{
+  "$id": "https://arval.vantezzen.io/acs.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Constraint-Set",
+  "description": "Formal description for placement rules for AR-Objects in ARVal.",
+  "type": "object",
+  "required": ["name", "tags", "transform", "placement", "scope"],
+  "additionalProperties": false,
+
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the object (e.g. Tree)"
+    },
+
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Tags associated with the object (e.g. tree, plantable, nature)."
+    },
+
+    "scope": {
+      "const": "object",
+      "description": "Scope of the rules, must be 'object' for ACS."
+    },
+
+    "transform": {
+      "type": "array",
+      "description": "Transformation rules for placement, scale and rotation.",
+      "items": { "$ref": "#/$defs/transformRule" }
+    },
+
+    "placement": {
+      "type": "array",
+      "description": "Placement rules for the object.",
+      "items": { "$ref": "#/$defs/placementRule" }
+    }
+  },
+
+  "$defs": {
+    "actionEnum": {
+      "enum": ["allow-only", "forbid", "require"],
+      "description": "Type of constraint (positive/negative)."
+    },
+    "rotationAxes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["x", "y", "z"] },
+      "uniqueItems": true,
+      "description": "3D Axes (x, y, z)."
+    },
+
+    "transformRule": {
+      "type": "object",
+      "required": ["action", "subject"],
+      "additionalProperties": false,
+
+      "properties": {
+        "action": { "$ref": "#/$defs/actionEnum" },
+        "subject": { "enum": ["rotation", "scale", "position"] },
+
+        "axes": { "$ref": "#/$defs/rotationAxes" },
+        "between": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Upper and lower bounds for scale."
+        },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "active": { "type": "boolean" }
+      },
+
+      "allOf": [
+        {
+          "if": { "properties": { "subject": { "const": "rotation" } } },
+          "then": {
+            "required": ["axes"],
+            "properties": { "axes": { "$ref": "#/$defs/rotationAxes" } }
+          }
+        },
+        {
+          "if": { "properties": { "subject": { "const": "scale" } } },
+          "then": {
+            "required": ["between"],
+            "properties": {
+              "between": {
+                "type": "array",
+                "items": { "type": "number", "exclusiveMinimum": 0 },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "subject": { "const": "position" } } },
+          "then": {
+            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
+          }
+        }
+      ]
+    },
+
+    "placementRule": {
+      "type": "object",
+      "required": ["action", "subject", "reason"],
+      "properties": {
+        "action": { "$ref": "#/$defs/actionEnum" },
+        "subject": {
+          "type": "string",
+          "description": "Type of rule, e.g. 'distance'."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Human-readable reason for the rule."
+        },
+        "reasonType": {
+          "type": "string",
+          "enum": ["atomic", "full"],
+          "default": "atomic",
+          "description": "Type of reason, either 'atomic' (short and combinable) or 'full' (long sentence)."
+        }
+      },
+
+      "additionalProperties": true
+    }
+  }
+}

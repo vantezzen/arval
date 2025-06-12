@@ -1,0 +1,94 @@
+{
+  "$id": "https://arval.vantezzen.io/agcs.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Global Constraints",
+  "description": "Formal description for global placement rules for AR-Objects in ARVal.",
+  "type": "object",
+  "required": ["name", "scope", "rules"],
+  "additionalProperties": false,
+
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the constraint set (e.g. 'Fire truck safety space')"
+    },
+
+    "scope": {
+      "const": "global",
+      "description": "Scope of the rules, must be 'global' for AGCS."
+    },
+
+    "$comment": "PLACEMENT RULES - Recursive",
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/globalRule"
+      }
+    }
+  },
+
+  "$defs": {
+    "globalRule": {
+      "allOf": [
+        { "$ref": "./acs.schema.json#/$defs/placementRule" },
+        {
+          "type": "object",
+          "properties": {
+            "appliesToTags": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1
+            },
+            "area": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "required": ["type", "center", "radius"],
+                  "properties": {
+                    "type": { "const": "circle" },
+                    "center": {
+                      "type": "array",
+                      "items": { "type": "number" },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "radius": { "type": "number", "exclusiveMinimum": 0 }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["type", "coordinates"],
+                  "properties": {
+                    "type": { "const": "bbox" },
+                    "coordinates": {
+                      "type": "array",
+                      "items": { "type": "number" },
+                      "minItems": 4,
+                      "maxItems": 4
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "required": ["type", "coordinates"],
+                  "properties": {
+                    "type": { "const": "polygon" },
+                    "coordinates": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": { "type": "number" },
+                        "minItems": 2
+                      },
+                      "minItems": 3
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

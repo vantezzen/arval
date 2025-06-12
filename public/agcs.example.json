@@ -1,0 +1,21 @@
+{
+  "$schema": "./agcs.schema.json",
+  "name": "Fire Truck Safety Space",
+  "scope": "global",
+  "rules": [
+    {
+      "action": "forbid",
+      "subject": "surface",
+      "appliesToTags": ["plant", "furniture"],
+
+      "reason": "Die Feuerwehr benötigt diese Fläche als Wendekreis.",
+      "reasonType": "full",
+
+      "area": {
+        "type": "circle",
+        "center": [0, 0],
+        "radius": 10
+      }
+    }
+  ]
+}

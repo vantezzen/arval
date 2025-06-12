@@ -1,0 +1,54 @@
+{
+  "$schema": "./acs.schema.json",
+  "name": "Tree",
+  "tags": ["tree", "plant", "nature"],
+
+  "transform": [
+    {
+      "action": "allow-only",
+      "subject": "rotation",
+      "axes": ["y"],
+      "active": false
+    },
+    {
+      "action": "forbid",
+      "subject": "rotation",
+      "axes": ["x", "z"]
+    },
+
+    {
+      "action": "allow-only",
+      "subject": "scale",
+      "between": [0.5, 1.5]
+    }
+  ],
+
+  "placement": [
+    {
+      "action": "forbid",
+      "subject": "surface",
+      "tags": ["asphalted", "water"],
+      "reason": "auf versiegelten Flächen wachsen"
+    },
+
+    {
+      "anyOf": [
+        {
+          "action": "require",
+          "subject": "surface",
+          "tag": "planting_bed",
+          "reason": "in einem Pflanzbeet platziert sein",
+          "reasonType": "atomic"
+        },
+        {
+          "action": "require",
+          "subject": "distance",
+          "to": "road",
+          "min": 2.0,
+          "reason": "mindestens 2 Meter von der Straße entfernt sein",
+          "reasonType": "atomic"
+        }
+      ]
+    }
+  ]
+}
