@@ -5,6 +5,7 @@ import type Object from "../dto/Object";
 import { GroundType } from "../types/world";
 import MODELS from "../config/models";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import GROUND_TAGS from "../config/groundTags";
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/");
@@ -69,5 +70,11 @@ export default class Ground {
     return cornerPoints.map((p) =>
       this.validation.segmentation.getGroundTypeAtPosition(p),
     );
+  }
+
+  getGroundTagsForTypes(types: GroundType[]): string[] {
+    const tags = types.map((type) => GROUND_TAGS[type]).flat();
+
+    return [...new Set(tags)];
   }
 }

@@ -16,6 +16,10 @@ function CanvasObject({ object }: { object: Object }) {
       validation.ground.getGroundType(object).then((groundType) => {
         console.log("GroundType", groundType);
       });
+
+      validation.validate(object).then((validation) => {
+        console.log("validation", validation);
+      });
     };
 
     object.on("update", onUpdate);

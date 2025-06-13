@@ -9,3 +9,12 @@ export enum Controls {
   rotateRight = "rotateRight",
   rotateLeft = "rotateLeft",
 }
+
+export type ValidationError = {
+  reason: string;
+  type: "atomic" | "full";
+};
+
+export type ValidationResult = {
+  error?: ValidationError;
+};

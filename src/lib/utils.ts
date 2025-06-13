@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function mergeUnique<T extends Array<unknown>>(arr1: T, arr2: T) {
-  return [...new Set([...arr1, ...arr2])];
+  return [...new Set([...(arr1 ?? []), ...(arr2 ?? [])])];
 }

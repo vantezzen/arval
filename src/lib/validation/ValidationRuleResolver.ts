@@ -38,8 +38,14 @@ export default class ValidationRuleResolver {
         ],
         scope: "object",
 
-        transform: [...currentRuleset.transform, ...newRuleset.transform],
-        placement: [...currentRuleset.placement, ...newRuleset.placement],
+        transform: [
+          ...(currentRuleset.transform ?? []),
+          ...newRuleset.transform,
+        ],
+        placement: [
+          ...(currentRuleset.placement ?? []),
+          ...newRuleset.placement,
+        ],
       }),
       {} as ConstraintSet,
     );
