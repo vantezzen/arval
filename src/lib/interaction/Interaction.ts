@@ -1,5 +1,5 @@
 import { Euler, Quaternion, Vector3 } from "three";
-import { useObjectTransformStore } from "../stores/objectTransformStore";
+import { useObjectStore } from "../stores/objectStore";
 
 /**
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/ModelessTouch/ModelessTouchInteraction.ts
@@ -17,6 +17,7 @@ export default class Interaction {
 
   private prevAngle: number | null = null;
   private prevCenterPoint: Vector3 | null = null;
+  private mouseDown = false;
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
     this.cameraPosition.copy(cameraPosition);
@@ -60,6 +61,50 @@ export default class Interaction {
     this.prevCenterPoint = null;
   }
 
+  /** Makes a mouse event look like a single‐finger `Touch` for reuse. */
+  private static asSyntheticTouch(evt: MouseEvent): Touch {
+    // Only the `clientX`/`clientY` properties are used in the math below
+    return { clientX: evt.clientX, clientY: evt.clientY } as unknown as Touch;
+  }
+
+  onClickStart(event: MouseEvent) {
+    if (event.button !== 0) return;
+
+    this.mouseDown = true;
+
+    this.prevTouchX = event.clientX;
+    this.prevTouchY = event.clientY;
+    this.currentTouchPoints = [Interaction.asSyntheticTouch(event)];
+  }
+
+  onClickMove(event: MouseEvent) {
+    if (!this.mouseDown) return;
+
+    const synthetic = Interaction.asSyntheticTouch(event);
+    const nextTouchPoints = [synthetic];
+
+    this.handleUpdate(nextTouchPoints);
+    this.currentTouchPoints = nextTouchPoints;
+
+    this.prevTouchX = event.clientX;
+    this.prevTouchY = event.clientY;
+  }
+
+  onClickEnd() {
+    if (!this.mouseDown) return;
+    this.mouseDown = false;
+
+    // Run one last update with zero points to finish any interaction
+    this.handleUpdate([]);
+
+    this.currentTouchPoints = [];
+    this.prevTouchX = null;
+    this.prevTouchY = null;
+    this.prevDistance = null;
+    this.prevAngle = null;
+    this.prevCenterPoint = null;
+  }
+
   private handleUpdate(nextTouchPoints?: Touch[]) {
     this.updateMove(nextTouchPoints);
     this.updateScale(nextTouchPoints);
@@ -75,8 +120,12 @@ export default class Interaction {
 
     const deltaX = currentTouch.clientX - this.prevTouchX;
     const deltaY = currentTouch.clientY - this.prevTouchY;
-    const state = useObjectTransformStore.getState();
-    const objectPosition = state.objectPosition.clone();
+    const state = useObjectStore.getState();
+    if (!state.editingObject) {
+      console.warn("Tried moving object but no object selected");
+      return;
+    }
+    const objectPosition = state.editingObject.position.clone();
     const cameraQuat = new Quaternion().setFromEuler(this.cameraRotation);
 
     // Take the camera's local -Z as "forward", apply that quaternion to world space.
@@ -112,7 +161,7 @@ export default class Interaction {
       .add(cameraForward.clone().multiplyScalar(newDistForward))
       .add(cameraRight.clone().multiplyScalar(newDistRight));
 
-    state.setObjectPosition(newPos);
+    state.editingObject.position = newPos;
   }
 
   updateScale(nextTouchPoints?: Touch[]) {
@@ -131,16 +180,21 @@ export default class Interaction {
     if (prevDistance === null) return;
 
     const distanceDelta = distance - prevDistance;
-    const state = useObjectTransformStore.getState();
+    const state = useObjectStore.getState();
 
-    const scale = state.objectScale;
+    if (!state.editingObject) {
+      console.warn("Tried to scale object but none selected");
+      return;
+    }
+
+    const scale = state.editingObject.scale;
     const newScale = new Vector3(
       scale.x + distanceDelta * 0.01,
       scale.y + distanceDelta * 0.01,
       scale.z + distanceDelta * 0.01,
     );
 
-    state.setObjectScale(newScale);
+    state.editingObject.scale = newScale;
   }
 
   updateRotate(nextTouchPoints?: Touch[]) {
@@ -162,8 +216,14 @@ export default class Interaction {
     if (prevAngle === null) return;
 
     const angleDelta = angle - prevAngle;
-    const state = useObjectTransformStore.getState();
-    const rotation = state.objectRotation;
+    const state = useObjectStore.getState();
+
+    if (!state.editingObject) {
+      console.warn("Tried to rotate object but none selected");
+      return;
+    }
+
+    const rotation = state.editingObject.rotation;
 
     const yRotation = rotation.y - angleDelta;
 
@@ -190,7 +250,6 @@ export default class Interaction {
 
     // Update state
     const newRotation = new Euler(xRotation, yRotation, zRotation);
-
-    state.setObjectRotation(newRotation);
+    state.editingObject.rotation = newRotation;
   }
 }

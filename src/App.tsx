@@ -1,7 +1,7 @@
-import SegormerMultithreadFeedDemo from "./experiments/SegFormer/SegformerMultithreadFeedDemo";
+import AppCanvas from "./components/AppCanvas";
 
 function App() {
-  return <SegormerMultithreadFeedDemo />;
+  return <AppCanvas />;
 }
 
 export default App;

@@ -1,0 +1,179 @@
+{
+  "type": "FeatureCollection",
+  "name": "SimpleTestStreet",
+  "bbox": [0, -10, 200, 10],
+  "properties": {
+    "crs": "local-meters",
+    "units": "m",
+    "note": "Origin (0,0) at southwest corner; +x east, +y north"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "roadCentre",
+        "name": "Main St centreline",
+        "stroke": "#555555",
+        "strokeWidth": 1
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [0, 0],
+          [200, 0]
+        ]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "roadway",
+        "name": "Main St road surface",
+        "material": "asphalt",
+        "width": 7
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, -3.5],
+            [200, -3.5],
+            [200, 3.5],
+            [0, 3.5],
+            [0, -3.5]
+          ]
+        ]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "bikeLane",
+        "side": "south",
+        "material": "colored asphalt",
+        "width": 1.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, -5],
+            [200, -5],
+            [200, -3.5],
+            [0, -3.5],
+            [0, -5]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "bikeLane",
+        "side": "north",
+        "material": "colored asphalt",
+        "width": 1.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, 3.5],
+            [200, 3.5],
+            [200, 5],
+            [0, 5],
+            [0, 3.5]
+          ]
+        ]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "sidewalk",
+        "side": "south",
+        "material": "concrete",
+        "width": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, -7],
+            [200, -7],
+            [200, -5],
+            [0, -5],
+            [0, -7]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "sidewalk",
+        "side": "north",
+        "material": "concrete",
+        "width": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, 5],
+            [200, 5],
+            [200, 7],
+            [0, 7],
+            [0, 5]
+          ]
+        ]
+      }
+    },
+
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "greenVerge",
+        "side": "south",
+        "vegetation": "grass",
+        "width": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, -10],
+            [200, -10],
+            [200, -7],
+            [0, -7],
+            [0, -10]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "featureType": "greenVerge",
+        "side": "north",
+        "vegetation": "grass",
+        "width": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0, 7],
+            [200, 7],
+            [200, 10],
+            [0, 10],
+            [0, 7]
+          ]
+        ]
+      }
+    }
+  ]
+}
