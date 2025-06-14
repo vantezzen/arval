@@ -17,7 +17,7 @@
       "action": "forbid",
       "subject": "underground",
       "tags": ["asphalted"],
-      "reason": "auf einem Weg platziert werden"
+      "reason": "vollständig auf Gras platziert werden"
     },
     {
       "action": "forbid",

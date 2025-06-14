@@ -5,7 +5,7 @@ import streetData from "@/lib/segmentation/static/example.geo.json";
 
 const COLOR_MAP: Record<string, string> = {
   roadway: "#6e6e6e",
-  bikeLane: "#33a02c",
+  bikeLane: "#2e417d",
   sidewalk: "#cccccc",
   greenVerge: "#7dbf62",
   roadCentre: "#000000",

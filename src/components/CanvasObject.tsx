@@ -2,12 +2,14 @@ import MODELS from "@/lib/config/models";
 import type Object from "@/lib/dto/Object";
 import { useAppStore } from "@/lib/stores/appStore";
 import { Gltf } from "@react-three/drei";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUpdate } from "react-use";
+import ValidationErrors from "./ValidationErrors";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
   const validation = useAppStore((store) => store.validation);
+  const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
     const onUpdate = () => {
@@ -17,8 +19,9 @@ function CanvasObject({ object }: { object: Object }) {
         console.log("GroundType", groundType);
       });
 
-      validation.validate(object).then((validation) => {
-        console.log("validation", validation);
+      validation.validate(object).then((errors) => {
+        console.log("validation", errors);
+        setErrors(errors);
       });
     };
 
@@ -29,12 +32,15 @@ function CanvasObject({ object }: { object: Object }) {
   }, [object, update]);
 
   return (
-    <Gltf
-      position={object.position}
-      src={MODELS[object.objectType as keyof typeof MODELS]}
-      rotation={object.rotation}
-      scale={object.scale}
-    />
+    <>
+      <Gltf
+        position={object.position}
+        src={MODELS[object.objectType as keyof typeof MODELS]}
+        rotation={object.rotation}
+        scale={object.scale}
+      />
+      <ValidationErrors errors={errors} object={object} />
+    </>
   );
 }
 
