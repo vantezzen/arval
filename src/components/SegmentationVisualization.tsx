@@ -81,7 +81,7 @@ const LineVisual = ({ feature }: { feature: Feature }) => {
 export const SegmentationVisualization = ({
   // @ts-expect-error Street data
   data = streetData,
-  heightScale = 0.1,
+  heightScale = 0.01,
 }: {
   data?: FeatureCollection;
   heightScale?: number;

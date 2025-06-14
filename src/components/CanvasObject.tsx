@@ -5,6 +5,7 @@ import { Gltf } from "@react-three/drei";
 import { useEffect, useState } from "react";
 import { useUpdate } from "react-use";
 import ValidationErrors from "./ValidationErrors";
+import RedOverlayedGltf from "./RedOverlayedGltf";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
@@ -31,9 +32,11 @@ function CanvasObject({ object }: { object: Object }) {
     };
   }, [object, update]);
 
+  const GltfComponent = errors.length > 0 ? RedOverlayedGltf : Gltf;
+
   return (
     <>
-      <Gltf
+      <GltfComponent
         position={object.position}
         src={MODELS[object.objectType as keyof typeof MODELS]}
         rotation={object.rotation}
