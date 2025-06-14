@@ -1,7 +1,7 @@
 import type { ResolvedRule } from "@/lib/types/rules";
 import type Validation from "../Validation";
 import type Object from "@/lib/dto/Object";
-import type { Schema } from "zod";
+import type { ZodObject } from "zod/v4";
 import type { ValidationResult } from "@/lib/types/interface";
 
 export default abstract class Validator<T extends ResolvedRule> {
@@ -17,7 +17,7 @@ export default abstract class Validator<T extends ResolvedRule> {
   /**
    * Validate that a rule contains all required elements using Zod
    */
-  protected abstract getRuleSchema(): Schema;
+  protected abstract getRuleSchema(): ZodObject;
 
   /**
    * Validate a rule against an object

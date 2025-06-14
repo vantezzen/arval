@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "tags": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scope": {
+      "type": "string",
+      "const": "object"
+    },
+    "transform": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "allow-only",
+                  "forbid",
+                  "require"
+                ]
+              },
+              "subject": {
+                "type": "string",
+                "const": "rotation"
+              },
+              "axes": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "x",
+                    "y",
+                    "z"
+                  ]
+                }
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "active": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "action",
+              "subject",
+              "axes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "allow-only",
+                  "forbid",
+                  "require"
+                ]
+              },
+              "subject": {
+                "type": "string",
+                "const": "scale"
+              },
+              "between": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                ]
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "active": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "action",
+              "subject",
+              "between"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "allow-only",
+                  "forbid",
+                  "require"
+                ]
+              },
+              "subject": {
+                "type": "string",
+                "const": "position"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "active": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "action",
+              "subject"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "placement": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "allow-only",
+              "forbid",
+              "require"
+            ]
+          },
+          "subject": {
+            "description": "Type of rule, e.g. 'distance'.",
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "reasonType": {
+            "default": "atomic",
+            "type": "string",
+            "enum": [
+              "atomic",
+              "full"
+            ]
+          }
+        },
+        "required": [
+          "action",
+          "subject",
+          "reason",
+          "reasonType"
+        ],
+        "additionalProperties": {}
+      }
+    }
+  },
+  "required": [
+    "name",
+    "tags",
+    "scope",
+    "transform",
+    "placement"
+  ],
+  "additionalProperties": false
+}

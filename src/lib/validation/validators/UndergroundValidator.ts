@@ -1,21 +1,29 @@
 import type { ResolvedRule } from "@/lib/types/rules";
 import Validator from "./Validator";
-import z, { type Schema } from "zod";
+import z, { type ZodObject } from "zod/v4";
 import type Object from "@/lib/dto/Object";
 import { isTagMatched } from "../utils";
+import { placementRule } from "@/lib/types/acs";
 
-export default class UndergroundValidator extends Validator<any> {
+const undergroundRuleSchema = z.object({
+  ...placementRule.shape,
+  tags: z.string().array(),
+});
+type UndergroundRule = z.infer<typeof undergroundRuleSchema>;
+
+export default class UndergroundValidator extends Validator<UndergroundRule> {
   protected validatesRule(rule: ResolvedRule): boolean {
     return rule.subject === "underground";
   }
 
-  protected getRuleSchema(): Schema {
-    return z.object({
-      tags: z.string().array(),
-    });
+  protected getRuleSchema(): ZodObject {
+    return undergroundRuleSchema;
   }
 
-  protected async passes(rule: ResolvedRule, object: Object): Promise<boolean> {
+  protected async passes(
+    rule: UndergroundRule,
+    object: Object,
+  ): Promise<boolean> {
     const currentGroundTypes =
       await this.validation.ground.getGroundType(object);
     const groundTags =
