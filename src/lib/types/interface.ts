@@ -1,3 +1,5 @@
+import type { Area } from "./area";
+
 export enum Controls {
   forward = "forward",
   back = "back",
@@ -17,4 +19,5 @@ export type ValidationError = {
 
 export type ValidationResult = {
   error?: ValidationError;
+  highlightedAreas?: Area[];
 };

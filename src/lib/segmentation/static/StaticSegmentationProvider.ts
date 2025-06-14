@@ -2,13 +2,15 @@ import { GroundType } from "@/lib/types/world";
 import type { Vector3 } from "three";
 import type SegmentationProvider from "../SegmentationProvider";
 import streetData from "./example.geo.json";
-import type { FeatureCollection, Polygon } from "geojson";
+import type { FeatureCollection, Polygon, Geometry } from "geojson";
 import {
   calculateDistanceToLine,
   calculateDistanceToPolygon,
 } from "@/lib/utils/math";
 import GROUND_TAGS from "@/lib/config/groundTags";
 import { isTagMatched } from "@/lib/validation/utils";
+import type { GroundArea } from "../SegmentationProvider";
+import type { Area } from "@/lib/types/area";
 
 export default class StaticSegmentationProvider
   implements SegmentationProvider
@@ -31,22 +33,6 @@ export default class StaticSegmentationProvider
       if (intersect) inside = !inside;
     }
     return inside;
-  }
-
-  getGroundTypeAtPosition(position: Vector3): GroundType {
-    const px = position.x;
-    const py = position.z; // world Z corresponds to GeoJSON Y after our -90° X rotation
-
-    for (const feature of this.data.features) {
-      if (feature.geometry.type !== "Polygon") continue;
-      const [outer] = feature.geometry.coordinates as Polygon["coordinates"];
-      if (this.pointInRing(px, py, outer)) {
-        return this.featureTypeToGroundType(
-          (feature.properties?.featureType as string) ?? "unknown",
-        );
-      }
-    }
-    return GroundType.unknown;
   }
 
   private featureTypeToGroundType(featureType: string): GroundType {
@@ -98,5 +84,64 @@ export default class StaticSegmentationProvider
     }
 
     return minDistance;
+  }
+
+  getGroundAreaAtPosition(position: Vector3): GroundArea | undefined {
+    const groundFeature = this.getGroundFeatureAtLocation(position);
+    if (!groundFeature) return;
+
+    const groundType = this.featureTypeToGroundType(
+      (groundFeature.properties?.featureType as string) ?? "unknown",
+    );
+    const groundArea = this.geojsonFeatureToArea(groundFeature.geometry);
+
+    return {
+      type: groundType,
+      area: groundArea,
+      tags: GROUND_TAGS[groundType],
+    };
+  }
+
+  private getGroundFeatureAtLocation(position: Vector3) {
+    const px = position.x;
+    const py = position.z; // world Z corresponds to GeoJSON Y after our -90° X rotation
+
+    for (const feature of this.data.features) {
+      if (feature.geometry.type !== "Polygon") continue;
+      const [outer] = feature.geometry.coordinates as Polygon["coordinates"];
+      if (this.pointInRing(px, py, outer)) {
+        return feature;
+      }
+    }
+  }
+
+  private geojsonFeatureToArea(geometry: Geometry): Area {
+    switch (geometry.type) {
+      case "Polygon": {
+        const [outer] = geometry.coordinates;
+        return {
+          type: "polygon",
+          coordinates: outer,
+        };
+      }
+      case "LineString": {
+        // For line strings, we create a bbox that encompasses the line
+        const points = geometry.coordinates;
+        const xs = points.map(([x]) => x);
+        const ys = points.map(([, y]) => y);
+
+        return {
+          type: "bbox",
+          coordinates: [
+            Math.min(...xs),
+            Math.min(...ys),
+            Math.max(...xs),
+            Math.max(...ys),
+          ],
+        };
+      }
+      default:
+        throw new Error(`Unsupported geometry type: ${geometry.type}`);
+    }
   }
 }

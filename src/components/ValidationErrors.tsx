@@ -18,10 +18,7 @@ function ErrorMessage({ text }: { text: string }) {
   );
 
   return (
-    <span
-      className="text-zinc-400"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <div className="text-zinc-400" dangerouslySetInnerHTML={{ __html: html }} />
   );
 }
 
@@ -39,7 +36,10 @@ function ValidationErrors({
       sprite
       position={object.position.clone().add(new Vector3(0, -0.1, 0))}
     >
-      <ChatBubble className="w-lg -translate-x-1/2" arrow="top-center">
+      <ChatBubble
+        className="w-lg -translate-x-1/2 grid gap-2"
+        arrow="top-center"
+      >
         {errors.map((error) => (
           <ErrorMessage text={error} />
         ))}

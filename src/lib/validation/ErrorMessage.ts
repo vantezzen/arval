@@ -6,7 +6,7 @@ export default class ErrorMessage {
 
     const finalErrors = errors
       .filter((error) => error.type === "full")
-      .map((error) => error.reason);
+      .map((error) => this.formatReason(error.reason));
     const atomicErrors = errors.filter((error) => error.type === "atomic");
     if (atomicErrors) {
       finalErrors.push(this.combineAtomicErrors(atomicErrors));
@@ -16,10 +16,10 @@ export default class ErrorMessage {
   }
 
   private combineAtomicErrors(errors: ValidationError[]) {
-    return `Das Objekt muss ${errors.map((error) => this.formatAtomicReason(error.reason)).join(" und ")}.`;
+    return `Das Objekt muss ${errors.map((error) => this.formatReason(error.reason)).join(" und ")}.`;
   }
 
-  private formatAtomicReason(reason: string) {
+  private formatReason(reason: string) {
     const [firstPart, secondPart] = reason.split(",", 2);
 
     if (!secondPart) return `<b>${firstPart}</b>`;

@@ -6,11 +6,16 @@ import { useEffect, useState } from "react";
 import { useUpdate } from "react-use";
 import ValidationErrors from "./ValidationErrors";
 import RedOverlayedGltf from "./RedOverlayedGltf";
+import type { ValidationResult } from "@/lib/validation/Validation";
+import HighlightArea from "./HighlightAreas";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
   const validation = useAppStore((store) => store.validation);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [validationResult, setValidationResult] = useState<ValidationResult>({
+    errors: [],
+    highlightedAreas: [],
+  });
 
   useEffect(() => {
     const onUpdate = () => {
@@ -22,7 +27,7 @@ function CanvasObject({ object }: { object: Object }) {
 
       validation.validate(object).then((errors) => {
         console.log("validation", errors);
-        setErrors(errors);
+        setValidationResult(errors);
       });
     };
 
@@ -32,7 +37,10 @@ function CanvasObject({ object }: { object: Object }) {
     };
   }, [object, update]);
 
-  const GltfComponent = errors.length > 0 ? RedOverlayedGltf : Gltf;
+  const GltfComponent =
+    validationResult.errors.length > 0 ? RedOverlayedGltf : Gltf;
+
+  console.log("validationResult", validationResult);
 
   return (
     <>
@@ -42,7 +50,9 @@ function CanvasObject({ object }: { object: Object }) {
         rotation={object.rotation}
         scale={object.scale}
       />
-      <ValidationErrors errors={errors} object={object} />
+      <ValidationErrors errors={validationResult.errors} object={object} />
+
+      <HighlightArea areas={validationResult.highlightedAreas} />
     </>
   );
 }

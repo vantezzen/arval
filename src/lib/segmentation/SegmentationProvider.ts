@@ -1,11 +1,18 @@
 import type { GroundType } from "@/lib/types/world";
 import type { Vector3 } from "three";
+import type { Area } from "../types/area";
+
+export type GroundArea = {
+  type: GroundType;
+  area?: Area;
+  tags: string[];
+};
 
 export default interface SegmentationProvider {
-  getGroundTypeAtPosition(position: Vector3): GroundType;
+  getGroundAreaAtPosition(position: Vector3): GroundArea | undefined;
   getDistanceToTag(
     position: Vector3,
     tags: string[],
-    maxDistance?: number
+    maxDistance?: number,
   ): number;
 }

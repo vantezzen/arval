@@ -1,5 +1,5 @@
 import type { ResolvedRule } from "@/lib/types/rules";
-import Validator from "./Validator";
+import Validator, { type PassResult } from "./Validator";
 import z, { type ZodObject } from "zod/v4";
 import type Object from "@/lib/dto/Object";
 import { placementRule } from "@/lib/types/acs";
@@ -23,7 +23,7 @@ export default class DistanceToValidator extends Validator<DistanceToRule> {
   protected async passes(
     rule: DistanceToRule,
     object: Object,
-  ): Promise<boolean> {
+  ): Promise<PassResult> {
     const cornerPoints =
       await this.validation.size.getObjectCornerPoints(object);
     const distance = Math.min(
@@ -32,6 +32,8 @@ export default class DistanceToValidator extends Validator<DistanceToRule> {
       ),
     );
 
-    return distance < rule.distance;
+    return {
+      passes: distance < rule.distance,
+    };
   }
 }

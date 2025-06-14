@@ -1,13 +1,18 @@
 import type Object from "../dto/Object";
 import type SegmentationProvider from "../segmentation/SegmentationProvider";
 import StaticSegmentationProvider from "../segmentation/static/StaticSegmentationProvider";
-import type { ValidationError } from "../types/interface";
+import type { Area } from "../types/area";
 import ErrorMessage from "./ErrorMessage";
 import Ground from "./Ground";
 import Size from "./Size";
 import ValidationRuleResolver from "./ValidationRuleResolver";
 import createValidators from "./validators";
 import TransformationValidator from "./validators/TransformationValidator";
+
+export type ValidationResult = {
+  errors: string[];
+  highlightedAreas: Area[];
+};
 
 export default class Validation {
   public segmentation: SegmentationProvider = new StaticSegmentationProvider();
@@ -18,7 +23,7 @@ export default class Validation {
   public size = new Size();
   public transformation = new TransformationValidator(this);
 
-  async validate(object: Object) {
+  async validate(object: Object): Promise<ValidationResult> {
     const rules = this.ruleResolver.resolveRulesetForObject(object.objectType);
 
     const errors = (
@@ -36,8 +41,14 @@ export default class Validation {
       )
     ).flat();
 
-    return this.errorMessage.createErrorMessage(
-      errors.map((error) => error.error).filter(Boolean) as ValidationError[],
-    );
+    return {
+      errors: this.errorMessage.createErrorMessage(
+        errors.map((error) => error.error).filter(Boolean),
+      ),
+      highlightedAreas: errors
+        .map((error) => error.highlightedAreas)
+        .filter(Boolean)
+        .flat(),
+    };
   }
 }

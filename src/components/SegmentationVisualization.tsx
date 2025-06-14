@@ -48,7 +48,7 @@ const PolygonMesh = ({
   return (
     <mesh
       geometry={geometry}
-      rotation={[-Math.PI / 2, 0, 0]}
+      rotation={[Math.PI / 2, 0, 0]}
       receiveShadow
       castShadow
     >

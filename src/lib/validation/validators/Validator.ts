@@ -3,6 +3,12 @@ import type Validation from "../Validation";
 import type Object from "@/lib/dto/Object";
 import type { ZodObject } from "zod/v4";
 import type { ValidationResult } from "@/lib/types/interface";
+import type { Area } from "@/lib/types/area";
+
+export type PassResult = {
+  passes: boolean;
+  highlightedAreas?: Area[];
+};
 
 export default abstract class Validator<T extends ResolvedRule> {
   constructor(protected validation: Validation) {}
@@ -22,7 +28,7 @@ export default abstract class Validator<T extends ResolvedRule> {
   /**
    * Validate a rule against an object
    */
-  protected abstract passes(rule: T, object: Object): Promise<boolean>;
+  protected abstract passes(rule: T, object: Object): Promise<PassResult>;
 
   public async validate(
     rule: ResolvedRule,
@@ -40,7 +46,10 @@ export default abstract class Validator<T extends ResolvedRule> {
       return {};
     }
 
-    const isCheckPassed = await this.passes(rule as T, object);
+    const { passes: isCheckPassed, highlightedAreas } = await this.passes(
+      rule as T,
+      object,
+    );
     const isFulfilled = this.isRuleFulfilled(rule, isCheckPassed);
     console.log("Validating rule", {
       isCheckPassed,
@@ -53,6 +62,7 @@ export default abstract class Validator<T extends ResolvedRule> {
           reason: rule.reason,
           type: rule.reasonType ?? "atomic",
         },
+        highlightedAreas,
       };
     }
     return {};

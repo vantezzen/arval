@@ -6,7 +6,7 @@
   "rules": [
     {
       "action": "forbid",
-      "subject": "surface",
+      "subject": "area",
       "appliesToTags": ["plant", "furniture"],
 
       "reason": "Die Feuerwehr benötigt diese Fläche als Wendekreis.",
@@ -15,7 +15,7 @@
       "area": {
         "type": "circle",
         "center": [0, 0],
-        "radius": 10
+        "radius": 1
       }
     }
   ]
