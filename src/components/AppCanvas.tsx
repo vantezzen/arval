@@ -17,6 +17,7 @@ import { useObjectStore } from "@/lib/stores/objectStore";
 import CanvasObject from "./CanvasObject";
 import SegmentationVisualization from "./SegmentationVisualization";
 import Validation from "@/lib/validation/Validation";
+import { Perf } from "r3f-perf";
 
 function AppCanvasContent() {
   const [interaction] = useState(() => new Interaction());
@@ -72,6 +73,14 @@ function AppCanvas() {
             />
             {/* alternative: <GizmoViewcube /> */}
           </GizmoHelper>
+          <Perf
+            customData={{
+              value: 0,
+              name: "Validation",
+              round: 2,
+              info: "ms",
+            }}
+          />
 
           {appStore.xrEnabled ? (
             <XR store={store}>

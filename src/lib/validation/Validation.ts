@@ -8,6 +8,7 @@ import Size from "./Size";
 import ValidationRuleResolver from "./ValidationRuleResolver";
 import createValidators from "./validators";
 import TransformationValidator from "./validators/TransformationValidator";
+import { setCustomData } from "r3f-perf";
 
 export type ValidationResult = {
   errors: string[];
@@ -24,6 +25,7 @@ export default class Validation {
   public transformation = new TransformationValidator(this);
 
   async validate(object: Object): Promise<ValidationResult> {
+    const startTime = performance.now();
     const rules = this.ruleResolver.resolveRulesetForObject(object.objectType);
 
     const errors = (
@@ -41,7 +43,7 @@ export default class Validation {
       )
     ).flat();
 
-    return {
+    const result = {
       errors: this.errorMessage.createErrorMessage(
         errors.map((error) => error.error).filter(Boolean),
       ),
@@ -50,5 +52,10 @@ export default class Validation {
         .filter(Boolean)
         .flat(),
     };
+
+    const runtime = performance.now() - startTime;
+    setCustomData(runtime);
+
+    return result;
   }
 }
