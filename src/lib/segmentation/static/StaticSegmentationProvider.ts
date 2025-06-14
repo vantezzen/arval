@@ -3,6 +3,12 @@ import type { Vector3 } from "three";
 import type SegmentationProvider from "../SegmentationProvider";
 import streetData from "./example.geo.json";
 import type { FeatureCollection, Polygon } from "geojson";
+import {
+  calculateDistanceToLine,
+  calculateDistanceToPolygon,
+} from "@/lib/utils/math";
+import GROUND_TAGS from "@/lib/config/groundTags";
+import { isTagMatched } from "@/lib/validation/utils";
 
 export default class StaticSegmentationProvider
   implements SegmentationProvider
@@ -53,5 +59,44 @@ export default class StaticSegmentationProvider
     };
 
     return CONVERSION[featureType] ?? GroundType.unknown;
+  }
+
+  getDistanceToTag(
+    position: Vector3,
+    tags: string[],
+    maxDistance?: number,
+  ): number {
+    const targetFeatures = this.data.features.filter((feature) => {
+      const groundType = this.featureTypeToGroundType(
+        feature.properties?.featureType,
+      );
+      const groundTags = GROUND_TAGS[groundType];
+
+      return isTagMatched(tags, groundTags);
+    });
+
+    let minDistance = Infinity;
+
+    for (const feature of targetFeatures) {
+      if (feature.geometry.type === "Polygon") {
+        const distance = calculateDistanceToPolygon(
+          position,
+          feature.geometry.coordinates[0],
+        );
+        minDistance = Math.min(minDistance, distance);
+      } else if (feature.geometry.type === "LineString") {
+        const distance = calculateDistanceToLine(
+          position,
+          feature.geometry.coordinates,
+        );
+        minDistance = Math.min(minDistance, distance);
+      }
+
+      if (maxDistance && minDistance <= maxDistance) {
+        return minDistance;
+      }
+    }
+
+    return minDistance;
   }
 }

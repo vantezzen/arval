@@ -4,6 +4,7 @@ import StaticSegmentationProvider from "../segmentation/static/StaticSegmentatio
 import type { ValidationError } from "../types/interface";
 import ErrorMessage from "./ErrorMessage";
 import Ground from "./Ground";
+import Size from "./Size";
 import ValidationRuleResolver from "./ValidationRuleResolver";
 import createValidators from "./validators";
 
@@ -13,6 +14,7 @@ export default class Validation {
   public validators = createValidators(this);
   public ruleResolver = new ValidationRuleResolver();
   public errorMessage = new ErrorMessage();
+  public size = new Size();
 
   async validate(object: Object) {
     const rules = this.ruleResolver.resolveRulesetForObject(object.objectType);

@@ -3,4 +3,9 @@ import type { Vector3 } from "three";
 
 export default interface SegmentationProvider {
   getGroundTypeAtPosition(position: Vector3): GroundType;
+  getDistanceToTag(
+    position: Vector3,
+    tags: string[],
+    maxDistance?: number
+  ): number;
 }

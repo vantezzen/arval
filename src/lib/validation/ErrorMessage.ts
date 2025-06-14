@@ -16,6 +16,6 @@ export default class ErrorMessage {
   }
 
   private combineAtomicErrors(errors: ValidationError[]) {
-    return `Das Objekt kann nicht platziert werden weil ${errors.map((error) => error.reason).join(", ")}`;
+    return `Das Objekt muss ${errors.map((error) => error.reason).join(" und ")}.`;
   }
 }
