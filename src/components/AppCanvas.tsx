@@ -16,7 +16,6 @@ import KeyboardInteractionConnector from "@/lib/interaction/KeyboardInteractionC
 import { useObjectStore } from "@/lib/stores/objectStore";
 import CanvasObject from "./CanvasObject";
 import SegmentationVisualization from "./SegmentationVisualization";
-import Validation from "@/lib/validation/Validation";
 import { Perf } from "r3f-perf";
 
 function AppCanvasContent() {
@@ -51,16 +50,8 @@ function AppCanvas() {
       { name: Controls.rotateLeft, keys: ["KeyQ"] },
       { name: Controls.rotateRight, keys: ["KeyE"] },
     ],
-    [],
+    []
   );
-
-  if (!appStore.validation) {
-    appStore.update({
-      validation: new Validation(),
-    });
-
-    return <div>Lade...</div>;
-  }
 
   return (
     <KeyboardControls map={keyboardMap}>

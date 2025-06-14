@@ -1,30 +1,30 @@
 import type Object from "../dto/Object";
-import type SegmentationProvider from "../segmentation/SegmentationProvider";
-import StaticSegmentationProvider from "../segmentation/static/StaticSegmentationProvider";
 import type { Area } from "../types/area";
-import ErrorMessage from "./ErrorMessage";
-import Ground from "./Ground";
-import Size from "./Size";
 import ValidationRuleResolver from "./ValidationRuleResolver";
-import createValidators from "./validators";
-import TransformationValidator from "./validators/TransformationValidator";
 import { setCustomData } from "r3f-perf";
+import { singleton, inject, injectable, container } from "tsyringe";
+import type Validator from "./validators/Validator";
+import { TYPES } from "../di/types";
+import type ErrorMessageService from "./ErrorMessageService";
 
 export type ValidationResult = {
   errors: string[];
   highlightedAreas: Area[];
 };
 
+@singleton()
+@injectable()
 export default class Validation {
-  public segmentation: SegmentationProvider = new StaticSegmentationProvider();
-  public ground = new Ground(this);
-  public validators = createValidators(this);
-  public ruleResolver = new ValidationRuleResolver();
-  public errorMessage = new ErrorMessage();
-  public size = new Size();
-  public transformation = new TransformationValidator(this);
+  constructor(
+    @inject(TYPES.ValidationRuleResolver)
+    public ruleResolver: ValidationRuleResolver,
+    @inject(TYPES.ErrorMessageService) public errorMessage: ErrorMessageService,
+  ) {}
 
   async validate(object: Object): Promise<ValidationResult> {
+    // We cannot get the validators directly via the constructor as that would create
+    // an infinite loop in the dependency resolve process
+    const validators = container.resolve<Validator<any>[]>(TYPES.Validators);
     const startTime = performance.now();
     const rules = this.ruleResolver.resolveRulesetForObject(object.objectType);
 
@@ -34,7 +34,7 @@ export default class Validation {
         rules.placement
           .map((rule) =>
             // for every validator
-            this.validators.map((validator) =>
+            validators.map((validator) =>
               // Run the validation
               validator.validate(rule, object),
             ),

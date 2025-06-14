@@ -1,10 +1,13 @@
 import { Euler, Quaternion, Vector3 } from "three";
 import { useObjectStore } from "../stores/objectStore";
-import { useAppStore } from "../stores/appStore";
+import { inject, injectable } from "tsyringe";
+import { TYPES } from "../di/types";
+import type TransformationValidator from "../validation/validators/TransformationValidator";
 
 /**
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/ModelessTouch/ModelessTouchInteraction.ts
  */
+@injectable()
 export default class Interaction {
   private currentTouchPoints: Touch[] = [];
 
@@ -19,6 +22,11 @@ export default class Interaction {
   private prevAngle: number | null = null;
   private prevCenterPoint: Vector3 | null = null;
   private mouseDown = false;
+
+  constructor(
+    @inject(TYPES.TransformationValidator)
+    private transformationValidator: TransformationValidator,
+  ) {}
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
     this.cameraPosition.copy(cameraPosition);
@@ -250,11 +258,9 @@ export default class Interaction {
     }
 
     // Update state
-    const appStore = useAppStore.getState();
-    const allowedAxes =
-      appStore.validation.transformation.getAllowedRotationAxes(
-        state.editingObject,
-      );
+    const allowedAxes = this.transformationValidator.getAllowedRotationAxes(
+      state.editingObject,
+    );
 
     const newRotation = new Euler(
       allowedAxes.includes("x") ? xRotation : rotation.x,

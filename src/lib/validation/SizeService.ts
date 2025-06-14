@@ -10,7 +10,7 @@ dracoLoader.setDecoderPath("/draco/");
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 
-export default class Size {
+export default class SizeService {
   sizeCache = new Map<string, Vector3>();
   activeLoaders = new Map<string, Promise<Vector3>>();
 
@@ -33,7 +33,7 @@ export default class Size {
           resolve(size);
         },
         undefined,
-        (err) => reject(err),
+        (err) => reject(err)
       );
     });
     this.activeLoaders.set(modelUrl, loader);
@@ -59,7 +59,7 @@ export default class Size {
 
   async getObjectCornerPoints(object: Object): Promise<Vector3[]> {
     const baseSize = await this.getRawObjectSize(
-      MODELS[object.objectType as keyof typeof MODELS],
+      MODELS[object.objectType as keyof typeof MODELS]
     );
     const cornerPoints = this.getObjectEdgePoints(baseSize, object);
     return cornerPoints;

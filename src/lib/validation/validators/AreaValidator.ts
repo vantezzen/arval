@@ -16,6 +16,7 @@ import {
   type CircleArea,
   type PolygonArea,
 } from "@/lib/types/area";
+import { injectable } from "tsyringe";
 
 const areaRuleSchema = z.object({
   ...placementRule.shape,
@@ -23,6 +24,7 @@ const areaRuleSchema = z.object({
 });
 type AreaRule = z.infer<typeof areaRuleSchema>;
 
+@injectable()
 export default class AreaValidator extends Validator<AreaRule> {
   protected validatesRule(rule: ResolvedRule): boolean {
     return rule.subject === "area";
@@ -59,7 +61,7 @@ export default class AreaValidator extends Validator<AreaRule> {
     const distance = calculateDistanceToCircle(
       position,
       new Vector3(center[0], 0, center[1]),
-      radius,
+      radius
     );
     return distance <= radius;
   }

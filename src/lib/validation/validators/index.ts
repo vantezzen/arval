@@ -1,12 +1,12 @@
-import type Validation from "../Validation";
 import DistanceToValidator from "./DistanceValidator";
 import UndergroundValidator from "./UndergroundValidator";
 import AreaValidator from "./AreaValidator";
+import { container } from "tsyringe";
 
-export default function createValidators(validation: Validation) {
+export default function createValidators() {
   return [
-    new UndergroundValidator(validation),
-    new DistanceToValidator(validation),
-    new AreaValidator(validation),
+    container.resolve(UndergroundValidator),
+    container.resolve(DistanceToValidator),
+    container.resolve(AreaValidator),
   ];
 }

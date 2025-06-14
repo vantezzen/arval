@@ -1,6 +1,8 @@
 import type { ValidationError } from "../types/interface";
+import { injectable } from "tsyringe";
 
-export default class ErrorMessage {
+@injectable()
+export default class ErrorMessageService {
   createErrorMessage(errors: ValidationError[]) {
     if (!errors.length) return [];
 

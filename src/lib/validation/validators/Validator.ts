@@ -4,6 +4,8 @@ import type Object from "@/lib/dto/Object";
 import type { ZodObject } from "zod/v4";
 import type { ValidationResult } from "@/lib/types/interface";
 import type { Area } from "@/lib/types/area";
+import { inject } from "tsyringe";
+import { TYPES } from "@/lib/di/types";
 
 export type PassResult = {
   passes: boolean;
@@ -11,7 +13,7 @@ export type PassResult = {
 };
 
 export default abstract class Validator<T extends ResolvedRule> {
-  constructor(protected validation: Validation) {}
+  constructor(@inject(TYPES.Validation) protected validation: Validation) {}
 
   /**
    * Indicate if this validator is responsible for validating this rule.
@@ -32,7 +34,7 @@ export default abstract class Validator<T extends ResolvedRule> {
 
   public async validate(
     rule: ResolvedRule,
-    object: Object,
+    object: Object
   ): Promise<ValidationResult> {
     if (!this.validatesRule(rule)) {
       return {};
@@ -48,7 +50,7 @@ export default abstract class Validator<T extends ResolvedRule> {
 
     const { passes: isCheckPassed, highlightedAreas } = await this.passes(
       rule as T,
-      object,
+      object
     );
     const isFulfilled = this.isRuleFulfilled(rule, isCheckPassed);
     console.log("Validating rule", {

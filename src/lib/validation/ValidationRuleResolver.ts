@@ -3,10 +3,12 @@ import type { ResolvedRuleset } from "../types/rules";
 import type { ConstraintSet } from "../types/schemas/acs.schema";
 import { mergeUnique } from "../utils";
 import { isTagMatched } from "./utils";
+import { injectable } from "tsyringe";
 
 /**
  * ValidationRuleResolver: Resolve all rules that belong to an object (local and global)
  */
+@injectable()
 export default class ValidationRuleResolver {
   /**
    * Resolve all rule and object definitions for an object
@@ -16,7 +18,7 @@ export default class ValidationRuleResolver {
    */
   resolveRulesetForObject(objectType: string): ResolvedRuleset {
     const directRulesets = this.resolveDirectRulesetsForObject(
-      objectType,
+      objectType
     ) as ResolvedRuleset;
     const globalRules = this.resolveGlobalRulesForTags(directRulesets.tags);
     directRulesets.placement = [...directRulesets.placement, ...globalRules];
@@ -47,7 +49,7 @@ export default class ValidationRuleResolver {
           ...newRuleset.placement,
         ],
       }),
-      {} as ConstraintSet,
+      {} as ConstraintSet
     );
 
     return combinedRuleset;
@@ -58,7 +60,7 @@ export default class ValidationRuleResolver {
 
     return globalRules.filter((rule) =>
       // Rules that don't have "appliesToTags" set apply to all objects instead
-      rule.appliesToTags ? isTagMatched(rule.appliesToTags, tags) : true,
+      rule.appliesToTags ? isTagMatched(rule.appliesToTags, tags) : true
     );
   }
 }

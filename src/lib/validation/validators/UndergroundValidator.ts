@@ -5,6 +5,10 @@ import type Object from "@/lib/dto/Object";
 import { isTagMatched } from "../utils";
 import { placementRule } from "@/lib/types/acs";
 import type { GroundArea } from "@/lib/segmentation/SegmentationProvider";
+import { injectable, inject } from "tsyringe";
+import { TYPES } from "@/lib/di/types";
+import type Validation from "../Validation";
+import type GroundService from "../GroundService";
 
 const undergroundRuleSchema = z.object({
   ...placementRule.shape,
@@ -12,7 +16,15 @@ const undergroundRuleSchema = z.object({
 });
 type UndergroundRule = z.infer<typeof undergroundRuleSchema>;
 
+@injectable()
 export default class UndergroundValidator extends Validator<UndergroundRule> {
+  constructor(
+    @inject(TYPES.Validation) validation: Validation,
+    @inject(TYPES.GroundService) private groundService: GroundService
+  ) {
+    super(validation);
+  }
+
   protected validatesRule(rule: ResolvedRule): boolean {
     return rule.subject === "underground";
   }
@@ -23,10 +35,9 @@ export default class UndergroundValidator extends Validator<UndergroundRule> {
 
   protected async passes(
     rule: UndergroundRule,
-    object: Object,
+    object: Object
   ): Promise<PassResult> {
-    const currentGroundTypes =
-      await this.validation.ground.getGroundType(object);
+    const currentGroundTypes = await this.groundService.getGroundType(object);
     const mergedTags = [
       ...new Set(currentGroundTypes.map((ground) => ground.tags).flat()),
     ];
@@ -39,7 +50,7 @@ export default class UndergroundValidator extends Validator<UndergroundRule> {
 
   private getHighlightedAreas(
     groundAreas: GroundArea[],
-    rule: UndergroundRule,
+    rule: UndergroundRule
   ) {
     return groundAreas
       .filter((area) => isTagMatched(rule.tags, area.tags))
