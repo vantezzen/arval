@@ -91,10 +91,7 @@ export const SegmentationVisualization = ({
       <ambientLight intensity={0.6} />
       <directionalLight position={[50, 100, 50]} intensity={0.8} castShadow />
 
-      <gridHelper
-        args={[200, 20, "#888888", "#444444"]}
-        rotation={[Math.PI / 2, 0, 0]}
-      />
+      <gridHelper args={[200, 20, "#888888", "#444444"]} />
 
       <group name="StreetLayout">
         {data.features.map((f, i) => {
