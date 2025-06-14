@@ -8,7 +8,7 @@ export default class ErrorMessage {
       .filter((error) => error.type === "full")
       .map((error) => this.formatReason(error.reason));
     const atomicErrors = errors.filter((error) => error.type === "atomic");
-    if (atomicErrors) {
+    if (atomicErrors.length) {
       finalErrors.push(this.combineAtomicErrors(atomicErrors));
     }
 

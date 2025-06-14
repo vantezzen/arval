@@ -4,6 +4,8 @@ import { useAppStore } from "@/lib/stores/appStore";
 import { store } from "@/lib/xr";
 import { Canvas } from "@react-three/fiber";
 import {
+  GizmoHelper,
+  GizmoViewport,
   KeyboardControls,
   type KeyboardControlsEntry,
 } from "@react-three/drei";
@@ -63,6 +65,14 @@ function AppCanvas() {
     <KeyboardControls map={keyboardMap}>
       <div className="h-screen w-screen">
         <Canvas>
+          <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+            <GizmoViewport
+              axisColors={["red", "green", "blue"]}
+              labelColor="black"
+            />
+            {/* alternative: <GizmoViewcube /> */}
+          </GizmoHelper>
+
           {appStore.xrEnabled ? (
             <XR store={store}>
               <AppCanvasContent />

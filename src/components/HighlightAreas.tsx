@@ -1,16 +1,17 @@
 import React, { useMemo } from "react";
 import * as THREE from "three";
 import type { Area } from "@/lib/types/area";
+import { useIsClickDown } from "@/lib/hooks/useIsClickDown";
 
 const HIGHLIGHT_COLOR = "#ff0000";
 const HIGHLIGHT_OPACITY = 0.1;
-const HEIGHT = 5;
+const HEIGHT = 0.1;
 
 const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
   const shape = useMemo(() => {
     const s = new THREE.Shape();
     area.coordinates.forEach(([x, y], idx) =>
-      idx === 0 ? s.moveTo(x, y) : s.lineTo(x, y),
+      idx === 0 ? s.moveTo(x, y) : s.lineTo(x, y)
     );
     return s;
   }, [area.coordinates]);
@@ -23,7 +24,7 @@ const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
             bevelEnabled: false,
           })
         : null,
-    [shape],
+    [shape]
   );
 
   if (!shape || !geometry) return null;
@@ -81,7 +82,7 @@ const CircleMesh = ({ area }: { area: Area & { type: "circle" } }) => {
       area.radius,
       area.radius,
       HEIGHT,
-      segments,
+      segments
     );
   }, [area.radius]);
 
@@ -102,6 +103,9 @@ const CircleMesh = ({ area }: { area: Area & { type: "circle" } }) => {
 };
 
 export const HighlightArea = ({ areas }: { areas: Area[] }) => {
+  const isClickDown = useIsClickDown();
+  if (!isClickDown) return null;
+
   return (
     <group name="HighlightedAreas">
       {areas.map((area, idx) => {

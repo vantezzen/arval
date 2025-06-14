@@ -50,11 +50,11 @@ export default class StaticSegmentationProvider
   getDistanceToTag(
     position: Vector3,
     tags: string[],
-    maxDistance?: number,
+    maxDistance?: number
   ): number {
     const targetFeatures = this.data.features.filter((feature) => {
       const groundType = this.featureTypeToGroundType(
-        feature.properties?.featureType,
+        feature.properties?.featureType
       );
       const groundTags = GROUND_TAGS[groundType];
 
@@ -67,13 +67,13 @@ export default class StaticSegmentationProvider
       if (feature.geometry.type === "Polygon") {
         const distance = calculateDistanceToPolygon(
           position,
-          feature.geometry.coordinates[0],
+          feature.geometry.coordinates[0]
         );
         minDistance = Math.min(minDistance, distance);
       } else if (feature.geometry.type === "LineString") {
         const distance = calculateDistanceToLine(
           position,
-          feature.geometry.coordinates,
+          feature.geometry.coordinates
         );
         minDistance = Math.min(minDistance, distance);
       }
@@ -91,7 +91,7 @@ export default class StaticSegmentationProvider
     if (!groundFeature) return;
 
     const groundType = this.featureTypeToGroundType(
-      (groundFeature.properties?.featureType as string) ?? "unknown",
+      (groundFeature.properties?.featureType as string) ?? "unknown"
     );
     const groundArea = this.geojsonFeatureToArea(groundFeature.geometry);
 
@@ -104,7 +104,7 @@ export default class StaticSegmentationProvider
 
   private getGroundFeatureAtLocation(position: Vector3) {
     const px = position.x;
-    const py = position.z; // world Z corresponds to GeoJSON Y after our -90° X rotation
+    const py = -position.z; // world Z corresponds to GeoJSON Y after our -90° X rotation
 
     for (const feature of this.data.features) {
       if (feature.geometry.type !== "Polygon") continue;
