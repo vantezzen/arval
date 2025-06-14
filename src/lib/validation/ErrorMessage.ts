@@ -16,6 +16,14 @@ export default class ErrorMessage {
   }
 
   private combineAtomicErrors(errors: ValidationError[]) {
-    return `Das Objekt muss <b>${errors.map((error) => error.reason).join("</b> und <b>")}</b>.`;
+    return `Das Objekt muss ${errors.map((error) => this.formatAtomicReason(error.reason)).join(" und ")}.`;
+  }
+
+  private formatAtomicReason(reason: string) {
+    const [firstPart, secondPart] = reason.split(",", 2);
+
+    if (!secondPart) return `<b>${firstPart}</b>`;
+
+    return `<b>${firstPart}</b>, <c>${secondPart}</c>`;
   }
 }

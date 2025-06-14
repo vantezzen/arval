@@ -10,7 +10,10 @@ function ErrorMessage({ text }: { text: string }) {
     () =>
       text
         .replace(/<b>/gi, '<span class="text-zinc-900 font-medium ">')
-        .replace(/<\/b>/gi, "</span>"),
+        .replace(/<\/b>/gi, "</span>")
+
+        .replace(/<c>/gi, '<span class="text-zinc-600">')
+        .replace(/<\/c>/gi, "</span>"),
     [text],
   );
 
