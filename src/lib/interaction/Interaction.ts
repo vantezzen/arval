@@ -1,5 +1,6 @@
 import { Euler, Quaternion, Vector3 } from "three";
 import { useObjectStore } from "../stores/objectStore";
+import { useAppStore } from "../stores/appStore";
 
 /**
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/ModelessTouch/ModelessTouchInteraction.ts
@@ -249,7 +250,17 @@ export default class Interaction {
     }
 
     // Update state
-    const newRotation = new Euler(xRotation, yRotation, zRotation);
+    const appStore = useAppStore.getState();
+    const allowedAxes =
+      appStore.validation.transformation.getAllowedRotationAxes(
+        state.editingObject,
+      );
+
+    const newRotation = new Euler(
+      allowedAxes.includes("x") ? xRotation : rotation.x,
+      allowedAxes.includes("y") ? yRotation : rotation.y,
+      allowedAxes.includes("z") ? zRotation : rotation.z,
+    );
     state.editingObject.rotation = newRotation;
   }
 }

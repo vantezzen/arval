@@ -7,6 +7,7 @@ import Ground from "./Ground";
 import Size from "./Size";
 import ValidationRuleResolver from "./ValidationRuleResolver";
 import createValidators from "./validators";
+import TransformationValidator from "./validators/TransformationValidator";
 
 export default class Validation {
   public segmentation: SegmentationProvider = new StaticSegmentationProvider();
@@ -15,6 +16,7 @@ export default class Validation {
   public ruleResolver = new ValidationRuleResolver();
   public errorMessage = new ErrorMessage();
   public size = new Size();
+  public transformation = new TransformationValidator(this);
 
   async validate(object: Object) {
     const rules = this.ruleResolver.resolveRulesetForObject(object.objectType);
