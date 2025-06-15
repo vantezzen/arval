@@ -10,13 +10,11 @@ const allAxis = ["x", "y", "z"] as const;
 export default class TransformationValidator {
   constructor(
     @inject(TYPES.ValidationRuleResolver)
-    private ruleResolver: ValidationRuleResolver
+    private ruleResolver: ValidationRuleResolver,
   ) {}
 
   getAllowedRotationAxes(object: Object): Axis[] {
-    const ruleset = this.ruleResolver.resolveRulesetForObject(
-      object.objectType
-    );
+    const ruleset = this.ruleResolver.resolveRulesetForObject(object.type);
     for (const rule of ruleset.transform) {
       if (rule.subject === "rotation") {
         const isRestrictive = rule.action === "allow-only";

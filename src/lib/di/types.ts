@@ -3,6 +3,7 @@ export const TYPES = {
   GroundService: "GroundService",
   SegmentationService: "SegmentationService",
   SizeService: "SizeService",
+  InteractionService: "InteractionService",
   Validators: "Validators",
   ValidationRuleResolver: "ValidationRuleResolver",
   ErrorMessageService: "ErrorMessageService",

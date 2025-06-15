@@ -1,4 +1,4 @@
-import Interaction from "@/lib/interaction/Interaction";
+import InteractionService from "@/lib/interaction/InteractionService";
 import InteractionConnector from "@/lib/interaction/InteractionConnector";
 import { useAppStore } from "@/lib/stores/appStore";
 import { store } from "@/lib/xr";
@@ -17,15 +17,20 @@ import { useObjectStore } from "@/lib/stores/objectStore";
 import CanvasObject from "./CanvasObject";
 import SegmentationVisualization from "./SegmentationVisualization";
 import { Perf } from "r3f-perf";
+import { container } from "tsyringe";
+import { TYPES } from "@/lib/di/types";
+import { IS_AR_ENABLED } from "@/lib/config/static";
 
 function AppCanvasContent() {
-  const [interaction] = useState(() => new Interaction());
+  const [interaction] = useState(() =>
+    container.resolve<InteractionService>(TYPES.InteractionService),
+  );
   const objects = useObjectStore((state) => state.objects);
 
   return (
     <>
       {objects.map((object) => (
-        <CanvasObject object={object} key={object.objectId} />
+        <CanvasObject object={object} key={object.id} />
       ))}
 
       <SegmentationVisualization />
@@ -37,8 +42,6 @@ function AppCanvasContent() {
 }
 
 function AppCanvas() {
-  const appStore = useAppStore();
-
   const keyboardMap = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
       { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
@@ -50,7 +53,7 @@ function AppCanvas() {
       { name: Controls.rotateLeft, keys: ["KeyQ"] },
       { name: Controls.rotateRight, keys: ["KeyE"] },
     ],
-    []
+    [],
   );
 
   return (
@@ -73,7 +76,7 @@ function AppCanvas() {
             }}
           />
 
-          {appStore.xrEnabled ? (
+          {IS_AR_ENABLED ? (
             <XR store={store}>
               <AppCanvasContent />
             </XR>
@@ -82,6 +85,12 @@ function AppCanvas() {
           )}
         </Canvas>
       </div>
+
+      {IS_AR_ENABLED && (
+        <div className="fixed bottom-0 left-0 w-screen p-3 bg-zinc-900/10">
+          <button onClick={() => store.enterAR()}>Enter AR</button>
+        </div>
+      )}
     </KeyboardControls>
   );
 }

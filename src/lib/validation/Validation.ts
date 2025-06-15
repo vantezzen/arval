@@ -6,6 +6,7 @@ import { singleton, inject, injectable, container } from "tsyringe";
 import type Validator from "./validators/Validator";
 import { TYPES } from "../di/types";
 import type ErrorMessageService from "./ErrorMessageService";
+import { getUniqueAreas } from "./utils";
 
 export type ValidationResult = {
   errors: string[];
@@ -26,7 +27,7 @@ export default class Validation {
     // an infinite loop in the dependency resolve process
     const validators = container.resolve<Validator<any>[]>(TYPES.Validators);
     const startTime = performance.now();
-    const rules = this.ruleResolver.resolveRulesetForObject(object.objectType);
+    const rules = this.ruleResolver.resolveRulesetForObject(object.type);
 
     const errors = (
       await Promise.all(
@@ -47,10 +48,12 @@ export default class Validation {
       errors: this.errorMessage.createErrorMessage(
         errors.map((error) => error.error).filter(Boolean),
       ),
-      highlightedAreas: errors
-        .map((error) => error.highlightedAreas)
-        .filter(Boolean)
-        .flat(),
+      highlightedAreas: getUniqueAreas(
+        errors
+          .map((error) => error.highlightedAreas)
+          .filter(Boolean)
+          .flat(),
+      ),
     };
 
     const runtime = performance.now() - startTime;

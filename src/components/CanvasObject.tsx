@@ -1,4 +1,3 @@
-import MODELS from "@/lib/config/models";
 import type Object from "@/lib/dto/Object";
 import { Gltf } from "@react-three/drei";
 import { useEffect, useState } from "react";
@@ -10,6 +9,8 @@ import HighlightArea from "./HighlightAreas";
 import { container } from "tsyringe";
 import type Validation from "@/lib/validation/Validation";
 import { TYPES } from "@/lib/di/types";
+import { useObjectStore } from "@/lib/stores/objectStore";
+import OBJECTS from "@/lib/config/objects";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
@@ -18,6 +19,7 @@ function CanvasObject({ object }: { object: Object }) {
     errors: [],
     highlightedAreas: [],
   });
+  const objectStore = useObjectStore();
 
   useEffect(() => {
     const onUpdate = () => {
@@ -38,15 +40,18 @@ function CanvasObject({ object }: { object: Object }) {
   const GltfComponent =
     validationResult.errors.length > 0 ? RedOverlayedGltf : Gltf;
 
-  console.log("validationResult", validationResult);
-
   return (
     <>
       <GltfComponent
         position={object.position}
-        src={MODELS[object.objectType as keyof typeof MODELS]}
+        src={OBJECTS[object.type as keyof typeof OBJECTS].model}
         rotation={object.rotation}
         scale={object.scale}
+        onClick={() => {
+          if (objectStore.editingObject?.id !== object.id) {
+            objectStore.setEditingObject(object);
+          }
+        }}
       />
       <ValidationErrors errors={validationResult.errors} object={object} />
 

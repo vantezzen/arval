@@ -1,8 +1,8 @@
 import { Box3, Object3D, Quaternion, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type Object from "../dto/Object";
-import MODELS from "../config/models";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import OBJECTS from "../config/objects";
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("/draco/");
@@ -33,7 +33,7 @@ export default class SizeService {
           resolve(size);
         },
         undefined,
-        (err) => reject(err)
+        (err) => reject(err),
       );
     });
     this.activeLoaders.set(modelUrl, loader);
@@ -59,7 +59,7 @@ export default class SizeService {
 
   async getObjectCornerPoints(object: Object): Promise<Vector3[]> {
     const baseSize = await this.getRawObjectSize(
-      MODELS[object.objectType as keyof typeof MODELS]
+      OBJECTS[object.type as keyof typeof OBJECTS].model,
     );
     const cornerPoints = this.getObjectEdgePoints(baseSize, object);
     return cornerPoints;

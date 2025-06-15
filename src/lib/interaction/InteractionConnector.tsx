@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import Interaction from "./Interaction";
+import Interaction from "./InteractionService";
 
 /**
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/UpdateInteraction.tsx

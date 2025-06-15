@@ -63,7 +63,7 @@ export default class AreaValidator extends Validator<AreaRule> {
       new Vector3(center[0], 0, center[1]),
       radius
     );
-    return distance <= radius;
+    return distance <= 0;
   }
 
   private passesBboxArea(area: BboxArea, position: Vector3): boolean {

@@ -8,6 +8,7 @@ import ErrorMessageService from "../validation/ErrorMessageService";
 import TransformationValidator from "../validation/validators/TransformationValidator";
 import createValidators from "../validation/validators";
 import Validation from "../validation/Validation";
+import InteractionService from "../interaction/InteractionService";
 
 export function configureContainer() {
   container.register(TYPES.SegmentationService, {
@@ -16,6 +17,10 @@ export function configureContainer() {
 
   container.register(TYPES.GroundService, {
     useClass: GroundService,
+  });
+
+  container.register(TYPES.InteractionService, {
+    useClass: InteractionService,
   });
 
   container.register(TYPES.SizeService, {

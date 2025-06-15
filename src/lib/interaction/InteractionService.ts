@@ -8,7 +8,7 @@ import type TransformationValidator from "../validation/validators/Transformatio
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/ModelessTouch/ModelessTouchInteraction.ts
  */
 @injectable()
-export default class Interaction {
+export default class InteractionService {
   private currentTouchPoints: Touch[] = [];
 
   private cameraPosition = new Vector3();
@@ -25,7 +25,7 @@ export default class Interaction {
 
   constructor(
     @inject(TYPES.TransformationValidator)
-    private transformationValidator: TransformationValidator,
+    private transformationValidator: TransformationValidator
   ) {}
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
@@ -83,13 +83,13 @@ export default class Interaction {
 
     this.prevTouchX = event.clientX;
     this.prevTouchY = event.clientY;
-    this.currentTouchPoints = [Interaction.asSyntheticTouch(event)];
+    this.currentTouchPoints = [InteractionService.asSyntheticTouch(event)];
   }
 
   onClickMove(event: MouseEvent) {
     if (!this.mouseDown) return;
 
-    const synthetic = Interaction.asSyntheticTouch(event);
+    const synthetic = InteractionService.asSyntheticTouch(event);
     const nextTouchPoints = [synthetic];
 
     this.handleUpdate(nextTouchPoints);
@@ -154,7 +154,7 @@ export default class Interaction {
     const cameraFlatPos = new Vector3(
       this.cameraPosition.x,
       objectPosition.y,
-      this.cameraPosition.z,
+      this.cameraPosition.z
     );
 
     const offset = new Vector3().subVectors(objectPosition, cameraFlatPos);
@@ -200,7 +200,7 @@ export default class Interaction {
     const newScale = new Vector3(
       scale.x + distanceDelta * 0.01,
       scale.y + distanceDelta * 0.01,
-      scale.z + distanceDelta * 0.01,
+      scale.z + distanceDelta * 0.01
     );
 
     state.editingObject.scale = newScale;
@@ -218,7 +218,7 @@ export default class Interaction {
     // Angle: Y Rotation
     const angle = Math.atan2(
       touch2.clientY - touch1.clientY,
-      touch2.clientX - touch1.clientX,
+      touch2.clientX - touch1.clientX
     );
     const prevAngle = this.prevAngle;
     this.prevAngle = angle;
@@ -243,7 +243,7 @@ export default class Interaction {
     const centerPoint = new Vector3(
       (touch1.clientX + touch2.clientX) / 2,
       (touch1.clientY + touch2.clientY) / 2,
-      0,
+      0
     );
     const prevCenterPoint = this.prevCenterPoint;
     this.prevCenterPoint = centerPoint;
@@ -251,7 +251,7 @@ export default class Interaction {
     if (prevCenterPoint) {
       const centerPointDelta = new Vector3().subVectors(
         centerPoint,
-        prevCenterPoint,
+        prevCenterPoint
       );
       xRotation = rotation.x + centerPointDelta.y * 0.01;
       zRotation = rotation.z - centerPointDelta.x * 0.01;
@@ -259,13 +259,13 @@ export default class Interaction {
 
     // Update state
     const allowedAxes = this.transformationValidator.getAllowedRotationAxes(
-      state.editingObject,
+      state.editingObject
     );
 
     const newRotation = new Euler(
       allowedAxes.includes("x") ? xRotation : rotation.x,
       allowedAxes.includes("y") ? yRotation : rotation.y,
-      allowedAxes.includes("z") ? zRotation : rotation.z,
+      allowedAxes.includes("z") ? zRotation : rotation.z
     );
     state.editingObject.rotation = newRotation;
   }

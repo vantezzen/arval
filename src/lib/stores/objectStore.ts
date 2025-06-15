@@ -12,6 +12,7 @@ interface ObjectState {
 
   addObject: (object: Object) => void;
   removeObject: (object: Object) => void;
+  setEditingObject: (object: Object) => void;
 
   debugMessage?: string;
   setDebugMessage: (message?: string) => void;
@@ -23,11 +24,7 @@ export const useObjectStore = create<ObjectState>((set) => ({
 
   addObject: (object: Object) =>
     set((state) => {
-      if (
-        state.objects.some(
-          (stateObject) => stateObject.objectId === object.objectId,
-        )
-      )
+      if (state.objects.some((stateObject) => stateObject.id === object.id))
         return {};
 
       return {
@@ -38,14 +35,13 @@ export const useObjectStore = create<ObjectState>((set) => ({
     set((state) => {
       return {
         objects: state.objects.filter(
-          (stateObject) => stateObject.objectId !== object.objectId,
+          (stateObject) => stateObject.id !== object.id,
         ),
         editingObject:
-          state.editingObject?.objectId === object.objectId
-            ? null
-            : state.editingObject,
+          state.editingObject?.id === object.id ? null : state.editingObject,
       };
     }),
+  setEditingObject: (object: Object) => set({ editingObject: object }),
 
   setDebugMessage: (message) => set({ debugMessage: message }),
 }));

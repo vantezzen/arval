@@ -8,11 +8,11 @@ export default class Object extends EventEmitter {
   private _scale: Vector3;
 
   constructor(
-    public objectType: string,
+    public type: string,
     position: Vector3,
     rotation: Euler,
     scale: Vector3,
-    public objectId: string = nanoid(),
+    public id: string = nanoid(),
   ) {
     super();
 
