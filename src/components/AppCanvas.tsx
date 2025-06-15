@@ -1,6 +1,5 @@
 import InteractionService from "@/lib/interaction/InteractionService";
 import InteractionConnector from "@/lib/interaction/InteractionConnector";
-import { useAppStore } from "@/lib/stores/appStore";
 import { store } from "@/lib/xr";
 import { Canvas } from "@react-three/fiber";
 import {
@@ -20,10 +19,11 @@ import { Perf } from "r3f-perf";
 import { container } from "tsyringe";
 import { TYPES } from "@/lib/di/types";
 import { IS_AR_ENABLED } from "@/lib/config/static";
+import AddObjectModal from "./addModal/AddObjectModal";
 
 function AppCanvasContent() {
   const [interaction] = useState(() =>
-    container.resolve<InteractionService>(TYPES.InteractionService),
+    container.resolve<InteractionService>(TYPES.InteractionService)
   );
   const objects = useObjectStore((state) => state.objects);
 
@@ -53,7 +53,7 @@ function AppCanvas() {
       { name: Controls.rotateLeft, keys: ["KeyQ"] },
       { name: Controls.rotateRight, keys: ["KeyE"] },
     ],
-    [],
+    []
   );
 
   return (
@@ -91,6 +91,8 @@ function AppCanvas() {
           <button onClick={() => store.enterAR()}>Enter AR</button>
         </div>
       )}
+
+      <AddObjectModal />
     </KeyboardControls>
   );
 }

@@ -13,6 +13,9 @@
     "moduleDetection": "force",
     "noEmit": true,
 
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,

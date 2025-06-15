@@ -1,9 +1,7 @@
 import type Object from "@/lib/dto/Object";
-import { Gltf } from "@react-three/drei";
 import { useEffect, useState } from "react";
 import { useUpdate } from "react-use";
 import ValidationErrors from "./ValidationErrors";
-import RedOverlayedGltf from "./RedOverlayedGltf";
 import type { ValidationResult } from "@/lib/validation/Validation";
 import HighlightArea from "./HighlightAreas";
 import { container } from "tsyringe";
@@ -11,6 +9,9 @@ import type Validation from "@/lib/validation/Validation";
 import { TYPES } from "@/lib/di/types";
 import { useObjectStore } from "@/lib/stores/objectStore";
 import OBJECTS from "@/lib/config/objects";
+import { EffectableGltf } from "./3d/effect/EffectableGltf";
+import { OutlineEffect } from "./3d/effect/OutlineEffect";
+import { OverlayEffect } from "./3d/effect/OverlayEffect";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
@@ -36,24 +37,29 @@ function CanvasObject({ object }: { object: Object }) {
       object.off("update", onUpdate);
     };
   }, [object, update]);
-
-  const GltfComponent =
-    validationResult.errors.length > 0 ? RedOverlayedGltf : Gltf;
+  const isEditing = objectStore.editingObject?.id === object.id;
 
   return (
     <>
-      <GltfComponent
+      <EffectableGltf
         position={object.position}
         src={OBJECTS[object.type as keyof typeof OBJECTS].model}
         rotation={object.rotation}
         scale={object.scale}
         onClick={() => {
-          if (objectStore.editingObject?.id !== object.id) {
+          if (!isEditing) {
             objectStore.setEditingObject(object);
           }
         }}
-      />
-      <ValidationErrors errors={validationResult.errors} object={object} />
+      >
+        {isEditing && <OutlineEffect color="#FF0000" />}
+        {validationResult.errors.length > 0 && (
+          <OverlayEffect color="red" opacity={0.3} />
+        )}
+      </EffectableGltf>
+      {isEditing && (
+        <ValidationErrors errors={validationResult.errors} object={object} />
+      )}
 
       <HighlightArea areas={validationResult.highlightedAreas} />
     </>
