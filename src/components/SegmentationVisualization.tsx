@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 import type { FeatureCollection, Feature, Polygon, LineString } from "geojson";
-import streetData from "@/lib/segmentation/static/example.geo.json";
+import streetData from "@/lib/segmentation/geojson/example.geo.json";
 
 const COLOR_MAP: Record<string, string> = {
   roadway: "#6e6e6e",

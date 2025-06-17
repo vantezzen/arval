@@ -3,6 +3,7 @@ import InteractionConnector from "@/lib/interaction/InteractionConnector";
 import { store } from "@/lib/xr";
 import { Canvas, useThree } from "@react-three/fiber";
 import {
+  Environment,
   GizmoHelper,
   GizmoViewport,
   KeyboardControls,
@@ -90,7 +91,12 @@ function AppCanvas() {
               <AppCanvasContent />
             </XR>
           ) : (
-            <AppCanvasContent />
+            <>
+              <AppCanvasContent />
+
+              <fog attach="fog" args={["white", 60, 100]} />
+              <Environment preset="city" />
+            </>
           )}
         </Canvas>
       </div>

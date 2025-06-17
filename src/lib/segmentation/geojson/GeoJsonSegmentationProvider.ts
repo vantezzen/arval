@@ -12,7 +12,7 @@ import { isTagMatched } from "@/lib/validation/utils";
 import type { ClosestObject, GroundArea } from "../SegmentationProvider";
 import type { Area } from "@/lib/types/area";
 
-export default class StaticSegmentationProvider
+export default class GeoJsonSegmentationProvider
   implements SegmentationProvider
 {
   // @ts-expect-error Street data

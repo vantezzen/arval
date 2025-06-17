@@ -1,6 +1,6 @@
 import { container } from "tsyringe";
 import { TYPES } from "./types";
-import StaticSegmentationProvider from "../segmentation/static/StaticSegmentationProvider";
+import GeoJsonSegmentationProvider from "../segmentation/geojson/GeoJsonSegmentationProvider";
 import GroundService from "../validation/GroundService";
 import SizeService from "../validation/SizeService";
 import ValidationRuleResolver from "../validation/ValidationRuleResolver";
@@ -12,7 +12,7 @@ import InteractionService from "../interaction/InteractionService";
 
 export function configureContainer() {
   container.register(TYPES.SegmentationService, {
-    useClass: StaticSegmentationProvider,
+    useClass: GeoJsonSegmentationProvider,
   });
 
   container.register(TYPES.GroundService, {
