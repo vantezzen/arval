@@ -24,6 +24,11 @@
       "items": {
         "$ref": "#/$defs/globalRule"
       }
+    },
+
+    "$schema": {
+      "type": "string",
+      "description": "Schema File."
     }
   },
 

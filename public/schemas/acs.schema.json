@@ -35,6 +35,11 @@
       "type": "array",
       "description": "Placement rules for the object.",
       "items": { "$ref": "#/$defs/placementRule" }
+    },
+
+    "$schema": {
+      "type": "string",
+      "description": "Schema File."
     }
   },
 

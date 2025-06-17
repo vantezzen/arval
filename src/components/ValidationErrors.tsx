@@ -37,7 +37,7 @@ function ValidationErrors({
       position={object.position.clone().add(new Vector3(0, -0.1, 0))}
     >
       <ChatBubble
-        className="w-lg -translate-x-1/2 grid gap-2"
+        className="w-lg -translate-x-1/2 grid gap-2 pointer-events-none"
         arrow="top-center"
       >
         {errors.map((error) => (

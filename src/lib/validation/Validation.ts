@@ -19,7 +19,7 @@ export default class Validation {
   constructor(
     @inject(TYPES.ValidationRuleResolver)
     public ruleResolver: ValidationRuleResolver,
-    @inject(TYPES.ErrorMessageService) public errorMessage: ErrorMessageService,
+    @inject(TYPES.ErrorMessageService) public errorMessage: ErrorMessageService
   ) {}
 
   async validate(object: Object): Promise<ValidationResult> {
@@ -37,22 +37,23 @@ export default class Validation {
             // for every validator
             validators.map((validator) =>
               // Run the validation
-              validator.validate(rule, object),
-            ),
+              validator.validate(rule, object)
+            )
           )
-          .flat(),
+          .flat()
       )
     ).flat();
 
     const result = {
       errors: this.errorMessage.createErrorMessage(
         errors.map((error) => error.error).filter(Boolean),
+        rules
       ),
       highlightedAreas: getUniqueAreas(
         errors
           .map((error) => error.highlightedAreas)
           .filter(Boolean)
-          .flat(),
+          .flat()
       ),
     };
 

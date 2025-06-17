@@ -1,6 +1,6 @@
 {
-  "$schema": "../public/schemas/agcs.schema.json",
-  "name": "Fire Truck Safety Spaces",
+  "$schema": "https://arval.vantezzen.io/schemas/agcs.schema.json",
+  "name": "Feuerwehr Wendekreise",
   "scope": "global",
 
   "rules": [

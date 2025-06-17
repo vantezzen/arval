@@ -1,6 +1,6 @@
 {
-  "$schema": "../public/schemas/acs.schema.json",
-  "name": "Sitzbank",
+  "$schema": "https://arval.vantezzen.io/schemas/acs.schema.json",
+  "name": "Die Sitzbank",
   "scope": "object",
   "tags": ["bench", "furniture", "seat"],
 
