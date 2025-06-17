@@ -5,25 +5,19 @@ import { useIsClickDown } from "@/lib/hooks/useIsClickDown";
 
 const HIGHLIGHT_COLOR = "#ff0000";
 const HIGHLIGHT_OPACITY = 0.1;
-const HEIGHT = 0.1;
+const HEIGHT = 0.01;
 
 const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
   const shape = useMemo(() => {
     const s = new THREE.Shape();
-    area.coordinates.forEach(([x, y], idx) =>
-      idx === 0 ? s.moveTo(x, y) : s.lineTo(x, y)
+    area.coordinates.forEach(([x, z], idx) =>
+      idx === 0 ? s.moveTo(x, z) : s.lineTo(x, z)
     );
     return s;
   }, [area.coordinates]);
 
   const geometry = useMemo(
-    () =>
-      shape
-        ? new THREE.ExtrudeGeometry(shape, {
-            depth: HEIGHT,
-            bevelEnabled: false,
-          })
-        : null,
+    () => (shape ? new THREE.ShapeGeometry(shape) : null),
     [shape]
   );
 
@@ -34,13 +28,14 @@ const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
       geometry={geometry}
       position={[0, HEIGHT, 0]}
       rotation={[-Math.PI / 2, 0, 0]}
-      receiveShadow
-      castShadow
+      renderOrder={1}
     >
-      <meshStandardMaterial
+      <meshBasicMaterial
         color={HIGHLIGHT_COLOR}
         transparent
         opacity={HIGHLIGHT_OPACITY}
+        side={THREE.DoubleSide}
+        depthWrite={false}
       />
     </mesh>
   );
@@ -48,10 +43,10 @@ const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
 
 const BboxMesh = ({ area }: { area: Area & { type: "bbox" } }) => {
   const geometry = useMemo(() => {
-    const [minX, minY, maxX, maxY] = area.coordinates;
+    const [minX, minZ, maxX, maxZ] = area.coordinates;
     const width = maxX - minX;
-    const height = maxY - minY;
-    return new THREE.BoxGeometry(width, HEIGHT, height);
+    const depth = maxZ - minZ;
+    return new THREE.PlaneGeometry(width, depth);
   }, [area.coordinates]);
 
   return (
@@ -63,13 +58,14 @@ const BboxMesh = ({ area }: { area: Area & { type: "bbox" } }) => {
         (area.coordinates[1] + area.coordinates[3]) / 2,
       ]}
       rotation={[-Math.PI / 2, 0, 0]}
-      receiveShadow
-      castShadow
+      renderOrder={1}
     >
-      <meshStandardMaterial
+      <meshBasicMaterial
         color={HIGHLIGHT_COLOR}
         transparent
         opacity={HIGHLIGHT_OPACITY}
+        side={THREE.DoubleSide}
+        depthWrite={false}
       />
     </mesh>
   );
@@ -78,25 +74,23 @@ const BboxMesh = ({ area }: { area: Area & { type: "bbox" } }) => {
 const CircleMesh = ({ area }: { area: Area & { type: "circle" } }) => {
   const geometry = useMemo(() => {
     const segments = 32;
-    return new THREE.CylinderGeometry(
-      area.radius,
-      area.radius,
-      HEIGHT,
-      segments
-    );
+    return new THREE.CircleGeometry(area.radius, segments);
   }, [area.radius]);
 
   return (
     <mesh
       geometry={geometry}
       position={[area.center[0], HEIGHT, area.center[1]]}
-      receiveShadow
-      castShadow
+      rotation={[-Math.PI / 2, 0, 0]}
+      renderOrder={1}
     >
-      <meshStandardMaterial
+      <meshBasicMaterial
         color={HIGHLIGHT_COLOR}
         transparent
         opacity={HIGHLIGHT_OPACITY}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+        depthTest={false}
       />
     </mesh>
   );
