@@ -17,6 +17,10 @@ export function calculateDistanceToPolygon(
     return Infinity;
   }
 
+  if (isPointInPolygon(point, polygon)) {
+    return 0;
+  }
+
   let minDistance = Infinity;
   for (let i = 0; i < polygon.length; i++) {
     const j = (i + 1) % polygon.length;
@@ -69,9 +73,7 @@ export function calculateDistanceToLineSegment(
   }
 
   const lineDir = line.divideScalar(lineLength);
-
   const pointToStart = point.clone().sub(lineStart);
-
   const projection = pointToStart.dot(lineDir);
 
   if (projection < 0) {
@@ -92,41 +94,57 @@ export function calculateDistanceToLineSegment(
 export function isPointInBbox(point: Vector3, bbox: number[]): boolean {
   const minX = Math.min(bbox[0], bbox[2]);
   const maxX = Math.max(bbox[0], bbox[2]);
-  const minY = Math.min(bbox[1], bbox[3]);
-  const maxY = Math.max(bbox[1], bbox[3]);
+  const minZ = Math.min(bbox[1], bbox[3]);
+  const maxZ = Math.max(bbox[1], bbox[3]);
 
   return (
-    point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY
+    point.x >= minX && point.x <= maxX && point.z >= minZ && point.z <= maxZ
   );
 }
 
-export function isPointInPolygon(point: Vector3, polygon: number[][]): boolean {
-  const minX = Math.min(...polygon.map((p) => p[0]));
-  const maxX = Math.max(...polygon.map((p) => p[0]));
-  const minY = Math.min(...polygon.map((p) => p[1]));
-  const maxY = Math.max(...polygon.map((p) => p[1]));
+export function isPointInPolygon(
+  point: Vector3,
+  polygon: number[][],
+  epsilon = 1e-6
+): boolean {
+  if (polygon.length < 3) return false;
 
-  if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {
-    return false;
+  const onSegment = (
+    ax: number,
+    az: number,
+    bx: number,
+    bz: number
+  ): boolean => {
+    if (
+      point.x < Math.min(ax, bx) - epsilon ||
+      point.x > Math.max(ax, bx) + epsilon ||
+      point.z < Math.min(az, bz) - epsilon ||
+      point.z > Math.max(az, bz) + epsilon
+    )
+      return false;
+
+    // colinearity test (2-D cross-product magnitude = 0)
+    const cross = (bx - ax) * (point.z - az) - (bz - az) * (point.x - ax);
+    return Math.abs(cross) < epsilon;
+  };
+
+  let inside = false;
+  let prev = polygon[polygon.length - 1];
+
+  for (const curr of polygon) {
+    const [xi, zi] = prev;
+    const [xj, zj] = curr;
+
+    // point right on an edge
+    if (onSegment(xi, zi, xj, zj)) return true;
+
+    const crosses =
+      zi > point.z !== zj > point.z && // straddles ray
+      point.x < ((xj - xi) * (point.z - zi)) / (zj - zi) + xi; // to the right of point
+
+    if (crosses) inside = !inside;
+
+    prev = curr;
   }
-
-  let rayCastCount = 0;
-  for (let i = 0; i < polygon.length; i++) {
-    const j = (i + 1) % polygon.length;
-    const start = polygon[i];
-    const end = polygon[j];
-
-    if (start[1] === end[1]) {
-      continue;
-    }
-
-    const xIntersect =
-      ((start[1] - end[1]) / (start[0] - end[0])) * (point.x - start[0]) +
-      start[1];
-    if (point.y < xIntersect) {
-      rayCastCount++;
-    }
-  }
-
-  return rayCastCount % 2 === 1;
+  return inside;
 }

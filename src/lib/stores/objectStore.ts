@@ -4,6 +4,8 @@ import { Euler, Vector3 } from "three";
 
 const EXAMPLE_OBJECTS = [
   new Object("bench", new Vector3(1, 0, 0), new Euler(), new Vector3(1, 1, 1)),
+  new Object("bench", new Vector3(1, 0, 5), new Euler(), new Vector3(1, 1, 1)),
+  // new Object("tree", new Vector3(2, 0, 2), new Euler(), new Vector3(1, 1, 1)),
 ];
 
 interface ObjectState {
@@ -20,7 +22,7 @@ interface ObjectState {
 
 export const useObjectStore = create<ObjectState>((set) => ({
   objects: EXAMPLE_OBJECTS,
-  editingObject: EXAMPLE_OBJECTS[0],
+  editingObject: null,
 
   addObject: (object: Object) =>
     set((state) => {
@@ -35,7 +37,7 @@ export const useObjectStore = create<ObjectState>((set) => ({
     set((state) => {
       return {
         objects: state.objects.filter(
-          (stateObject) => stateObject.id !== object.id,
+          (stateObject) => stateObject.id !== object.id
         ),
         editingObject:
           state.editingObject?.id === object.id ? null : state.editingObject,

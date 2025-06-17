@@ -11,12 +11,13 @@ import OBJECTS from "@/lib/config/objects";
 import ObjectDemo from "./ObjectDemo";
 import { useObjectStore } from "@/lib/stores/objectStore";
 import ObjectDto from "@/lib/dto/Object";
-import { Euler, Vector3 } from "three";
+import { Euler, Quaternion, Vector3 } from "three";
 import { useState } from "react";
+import { useThreeStore } from "@/lib/stores/threeStore";
 
 function AddObjectModal() {
   const objectStore = useObjectStore();
-  // const { camera } = useThree();
+  const three = useThreeStore((state) => state.three);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -39,14 +40,19 @@ function AddObjectModal() {
               className="cursor-pointer w-full h-32"
               onClick={() => {
                 const direction = new Vector3(0, 0, -1);
-                // direction.applyQuaternion(camera.quaternion);
-                // const position = camera.position
-                //   .clone()
-                //   .add(direction.multiplyScalar(5));
+                const sourceQuaternion =
+                  three?.camera.quaternion || new Quaternion();
+                const sourcePosition = three?.camera.position || new Vector3();
+
+                direction.applyQuaternion(sourceQuaternion);
+                const position = sourcePosition
+                  .clone()
+                  .add(direction.multiplyScalar(5));
+                position.y = 0;
 
                 const newObject = new ObjectDto(
                   object.id,
-                  new Vector3(0, 0, 0),
+                  position,
                   new Euler(),
                   new Vector3(1, 1, 1)
                 );

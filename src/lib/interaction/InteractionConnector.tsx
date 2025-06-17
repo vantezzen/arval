@@ -11,8 +11,6 @@ function InteractionConnector({ interaction }: { interaction: Interaction }) {
   });
 
   useEffect(() => {
-    console.log("Setup InteractionConnector");
-
     const onTouchStart = interaction.onTouchStart.bind(interaction);
     const onTouchMove = interaction.onTouchMove.bind(interaction);
     const onTouchEnd = interaction.onTouchEnd.bind(interaction);

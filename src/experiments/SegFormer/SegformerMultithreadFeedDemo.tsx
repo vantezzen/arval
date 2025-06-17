@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 export default function SegormerMultithreadFeedDemo() {
   const cores = Math.min(navigator.hardwareConcurrency || 4, 8);
   const [ready, setReady] = useState(false);
+  // eslint-disable-next-line prefer-const
   let [running, setRunning] = useState(false);
   const [last, setLast] = useState<number | null>(null);
   const [avg, setAvg] = useState<number | null>(null);
@@ -53,7 +54,7 @@ export default function SegormerMultithreadFeedDemo() {
           times.current.push(inferenceTime);
           setLast(inferenceTime);
           setAvg(
-            times.current.reduce((a, b) => a + b, 0) / times.current.length,
+            times.current.reduce((a, b) => a + b, 0) / times.current.length
           );
           workers.current[idx].busy = false;
         }
@@ -107,7 +108,7 @@ export default function SegormerMultithreadFeedDemo() {
       clearInterval(timer.current);
       stream.current?.getTracks().forEach((t) => t.stop());
     },
-    [],
+    []
   );
 
   return (
@@ -153,7 +154,7 @@ export default function SegormerMultithreadFeedDemo() {
               <div
                 className={cn(
                   "rounded-full w-3 h-3",
-                  worker.busy ? "bg-red-500" : "bg-emerald-500",
+                  worker.busy ? "bg-red-500" : "bg-emerald-500"
                 )}
                 key={idx}
               ></div>

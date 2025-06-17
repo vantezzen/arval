@@ -32,7 +32,7 @@ const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
   return (
     <mesh
       geometry={geometry}
-      position={[0, 0, 0]}
+      position={[0, HEIGHT, 0]}
       rotation={[-Math.PI / 2, 0, 0]}
       receiveShadow
       castShadow
@@ -59,7 +59,7 @@ const BboxMesh = ({ area }: { area: Area & { type: "bbox" } }) => {
       geometry={geometry}
       position={[
         (area.coordinates[0] + area.coordinates[2]) / 2,
-        0,
+        HEIGHT,
         (area.coordinates[1] + area.coordinates[3]) / 2,
       ]}
       rotation={[-Math.PI / 2, 0, 0]}
@@ -89,7 +89,7 @@ const CircleMesh = ({ area }: { area: Area & { type: "circle" } }) => {
   return (
     <mesh
       geometry={geometry}
-      position={[area.center[0], 0, area.center[1]]}
+      position={[area.center[0], HEIGHT, area.center[1]]}
       receiveShadow
       castShadow
     >

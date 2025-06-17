@@ -40,14 +40,21 @@ export default class DistanceToValidator extends Validator<DistanceToRule> {
     object: Object
   ): Promise<PassResult> {
     const cornerPoints = await this.sizeService.getObjectCornerPoints(object);
-    const distance = Math.min(
-      ...cornerPoints.map((point) =>
-        this.segmentation.getDistanceToTag(point, rule.tags)
-      )
-    );
+    const closestObject = cornerPoints
+      .map((point) => this.segmentation.getClosestObjectByTag(point, rule.tags))
+      .reduce((prev, curr) => {
+        if (!curr) return prev;
+        if (!prev || curr.distance < prev.distance) {
+          return curr;
+        }
+        return prev;
+      }, undefined);
 
     return {
-      passes: distance < rule.distance,
+      passes: !!closestObject && closestObject.distance < rule.distance,
+      highlightedAreas: closestObject
+        ? [closestObject.area].filter(Boolean)
+        : [],
     };
   }
 }

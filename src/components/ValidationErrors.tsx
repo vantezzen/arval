@@ -14,7 +14,7 @@ function ErrorMessage({ text }: { text: string }) {
 
         .replace(/<c>/gi, '<span class="text-zinc-600">')
         .replace(/<\/c>/gi, "</span>"),
-    [text],
+    [text]
   );
 
   return (
@@ -41,7 +41,7 @@ function ValidationErrors({
         arrow="top-center"
       >
         {errors.map((error) => (
-          <ErrorMessage text={error} />
+          <ErrorMessage text={error} key={error} />
         ))}
       </ChatBubble>
     </Html>

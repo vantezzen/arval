@@ -33,6 +33,7 @@
     "@react-three/xr": "^6.6.17",
     "@tailwindcss/vite": "^4.1.8",
     "@types/three": "^0.177.0",
+    "@vantezzen/effectable-gltf": "^1.0.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eslint-plugin-unused-imports": "^4.1.4",

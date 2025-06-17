@@ -8,11 +8,15 @@ export type GroundArea = {
   tags: string[];
 };
 
+export type ClosestObject = {
+  distance: number;
+  area?: Area;
+};
+
 export default interface SegmentationProvider {
   getGroundAreaAtPosition(position: Vector3): GroundArea | undefined;
-  getDistanceToTag(
+  getClosestObjectByTag(
     position: Vector3,
-    tags: string[],
-    maxDistance?: number,
-  ): number;
+    tags: string[]
+  ): ClosestObject | undefined;
 }

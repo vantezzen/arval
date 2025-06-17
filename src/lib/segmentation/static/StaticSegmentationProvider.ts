@@ -9,7 +9,7 @@ import {
 } from "@/lib/utils/math";
 import GROUND_TAGS from "@/lib/config/groundTags";
 import { isTagMatched } from "@/lib/validation/utils";
-import type { GroundArea } from "../SegmentationProvider";
+import type { ClosestObject, GroundArea } from "../SegmentationProvider";
 import type { Area } from "@/lib/types/area";
 
 export default class StaticSegmentationProvider
@@ -47,11 +47,10 @@ export default class StaticSegmentationProvider
     return CONVERSION[featureType] ?? GroundType.unknown;
   }
 
-  getDistanceToTag(
+  getClosestObjectByTag(
     position: Vector3,
-    tags: string[],
-    maxDistance?: number
-  ): number {
+    tags: string[]
+  ): ClosestObject | undefined {
     const targetFeatures = this.data.features.filter((feature) => {
       const groundType = this.featureTypeToGroundType(
         feature.properties?.featureType
@@ -62,28 +61,32 @@ export default class StaticSegmentationProvider
     });
 
     let minDistance = Infinity;
+    let closestArea: Area | undefined;
 
     for (const feature of targetFeatures) {
+      let distance = Infinity;
+
       if (feature.geometry.type === "Polygon") {
-        const distance = calculateDistanceToPolygon(
+        distance = calculateDistanceToPolygon(
           position,
           feature.geometry.coordinates[0]
         );
-        minDistance = Math.min(minDistance, distance);
       } else if (feature.geometry.type === "LineString") {
-        const distance = calculateDistanceToLine(
+        distance = calculateDistanceToLine(
           position,
           feature.geometry.coordinates
         );
-        minDistance = Math.min(minDistance, distance);
       }
 
-      if (maxDistance && minDistance <= maxDistance) {
-        return minDistance;
+      if (distance < minDistance) {
+        closestArea = this.geojsonFeatureToArea(feature.geometry);
+        minDistance = Math.min(minDistance, distance);
       }
     }
 
-    return minDistance;
+    return minDistance !== Infinity
+      ? { distance: minDistance, area: closestArea }
+      : undefined;
   }
 
   getGroundAreaAtPosition(position: Vector3): GroundArea | undefined {

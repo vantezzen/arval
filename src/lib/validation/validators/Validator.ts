@@ -53,11 +53,6 @@ export default abstract class Validator<T extends ResolvedRule> {
       object
     );
     const isFulfilled = this.isRuleFulfilled(rule, isCheckPassed);
-    console.log("Validating rule", {
-      isCheckPassed,
-      isFulfilled,
-      rule,
-    });
     if (!isFulfilled) {
       return {
         error: {

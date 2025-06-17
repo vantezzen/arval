@@ -9,9 +9,14 @@ import type Validation from "@/lib/validation/Validation";
 import { TYPES } from "@/lib/di/types";
 import { useObjectStore } from "@/lib/stores/objectStore";
 import OBJECTS from "@/lib/config/objects";
-import { EffectableGltf } from "./3d/effect/EffectableGltf";
-import { OutlineEffect } from "./3d/effect/OutlineEffect";
-import { OverlayEffect } from "./3d/effect/OverlayEffect";
+// import { EffectableGltf } from "./3d/effect/EffectableGltf";
+// import { OutlineEffect } from "./3d/effect/OutlineEffect";
+// import { OverlayEffect } from "./3d/effect/OverlayEffect";
+import {
+  EffectableGltf,
+  OutlineEffect,
+  OverlayEffect,
+} from "@vantezzen/effectable-gltf";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
@@ -46,22 +51,23 @@ function CanvasObject({ object }: { object: Object }) {
         src={OBJECTS[object.type as keyof typeof OBJECTS].model}
         rotation={object.rotation}
         scale={object.scale}
-        onClick={() => {
+        onPointerDown={() => {
           if (!isEditing) {
             objectStore.setEditingObject(object);
           }
         }}
       >
-        {isEditing && <OutlineEffect color="#FF0000" />}
-        {validationResult.errors.length > 0 && (
+        {isEditing && <OutlineEffect color="white" />}
+        {validationResult.errors.length > 0 && isEditing && (
           <OverlayEffect color="red" opacity={0.3} />
         )}
       </EffectableGltf>
-      {isEditing && (
-        <ValidationErrors errors={validationResult.errors} object={object} />
-      )}
-
       <HighlightArea areas={validationResult.highlightedAreas} />
+      {isEditing && (
+        <>
+          <ValidationErrors errors={validationResult.errors} object={object} />
+        </>
+      )}
     </>
   );
 }

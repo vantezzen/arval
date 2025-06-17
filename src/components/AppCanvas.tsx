@@ -1,7 +1,7 @@
 import InteractionService from "@/lib/interaction/InteractionService";
 import InteractionConnector from "@/lib/interaction/InteractionConnector";
 import { store } from "@/lib/xr";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import {
   GizmoHelper,
   GizmoViewport,
@@ -9,7 +9,7 @@ import {
   type KeyboardControlsEntry,
 } from "@react-three/drei";
 import { XR } from "@react-three/xr";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controls } from "@/lib/types/interface";
 import KeyboardInteractionConnector from "@/lib/interaction/KeyboardInteractionConnector";
 import { useObjectStore } from "@/lib/stores/objectStore";
@@ -20,12 +20,19 @@ import { container } from "tsyringe";
 import { TYPES } from "@/lib/di/types";
 import { IS_AR_ENABLED } from "@/lib/config/static";
 import AddObjectModal from "./addModal/AddObjectModal";
+import { useThreeStore } from "@/lib/stores/threeStore";
 
 function AppCanvasContent() {
   const [interaction] = useState(() =>
     container.resolve<InteractionService>(TYPES.InteractionService)
   );
   const objects = useObjectStore((state) => state.objects);
+
+  const three = useThree();
+  const { update } = useThreeStore();
+  useEffect(() => {
+    update({ three });
+  }, [three, update]);
 
   return (
     <>

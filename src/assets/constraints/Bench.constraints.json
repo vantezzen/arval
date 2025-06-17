@@ -15,12 +15,6 @@
   "placement": [
     {
       "action": "forbid",
-      "subject": "underground",
-      "tags": ["asphalted"],
-      "reason": "vollständig auf Gras platziert werden, da es sonst Fahrzeuge oder Fußgänger blockiert"
-    },
-    {
-      "action": "forbid",
       "subject": "distanceTo",
       "tags": ["street"],
       "distance": 1,
