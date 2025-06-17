@@ -16,7 +16,7 @@ export default function SegormerMultithreadFeedDemo() {
   const workers = useRef<{ w: Worker; busy: boolean }[]>([]);
   const times = useRef<number[]>([]);
   const stream = useRef<MediaStream | null>(null);
-  const timer = useRef<number>(null);
+  const timer = useRef<NodeJS.Timeout | number>(null);
   const interval = useRef(1000 / cores);
 
   const toURL = (bm: ImageBitmap) => {
@@ -105,6 +105,7 @@ export default function SegormerMultithreadFeedDemo() {
 
   useEffect(
     () => () => {
+      // @ts-expect-error Type juggling
       clearInterval(timer.current);
       stream.current?.getTracks().forEach((t) => t.stop());
     },

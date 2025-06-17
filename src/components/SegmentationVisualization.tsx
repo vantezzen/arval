@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import * as THREE from "three";
 import type { FeatureCollection, Feature, Polygon, LineString } from "geojson";
 import streetData from "@/lib/segmentation/static/example.geo.json";
@@ -23,7 +23,7 @@ const PolygonMesh = ({
     const [outer] = feature.geometry.coordinates as Polygon["coordinates"];
     const s = new THREE.Shape();
     outer.forEach(([x, y], idx) =>
-      idx === 0 ? s.moveTo(x, y) : s.lineTo(x, y),
+      idx === 0 ? s.moveTo(x, y) : s.lineTo(x, y)
     );
     return s;
   }, [feature]);
@@ -38,7 +38,7 @@ const PolygonMesh = ({
       shape
         ? new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false })
         : null,
-    [shape, depth],
+    [shape, depth]
   );
   const color =
     COLOR_MAP[feature.properties?.featureType as string] ?? "#aaaaaa";
@@ -61,7 +61,7 @@ const LineVisual = ({ feature }: { feature: Feature }) => {
   const points = useMemo(() => {
     if (feature.geometry.type !== "LineString") return [];
     return (feature.geometry.coordinates as LineString["coordinates"]).map(
-      ([x, y]) => new THREE.Vector3(x, 0.05, y),
+      ([x, y]) => new THREE.Vector3(x, 0.05, y)
     );
   }, [feature]);
 

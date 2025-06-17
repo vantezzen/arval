@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import * as THREE from "three";
 import type { Area } from "@/lib/types/area";
 import { useIsClickDown } from "@/lib/hooks/useIsClickDown";
