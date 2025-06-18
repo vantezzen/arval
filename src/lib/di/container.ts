@@ -7,7 +7,9 @@ import ValidationRuleResolver from "../validation/ValidationRuleResolver";
 import ErrorMessageService from "../validation/ErrorMessageService";
 import TransformationValidator from "../validation/validators/TransformationValidator";
 import createValidators from "../validation/validators";
-import Validation from "../validation/Validation";
+import ValidationOrchestrator from "../validation/ValidationOrchestrator";
+import ValidationExecutor from "../validation/ValidationExecutor";
+import ValidationReporter from "../validation/ValidationReporter";
 import InteractionService from "../interaction/InteractionService";
 
 export function configureContainer() {
@@ -39,13 +41,20 @@ export function configureContainer() {
     useClass: TransformationValidator,
   });
 
+  container.register(TYPES.ValidationExecutor, {
+    useClass: ValidationExecutor,
+  });
+
+  container.register(TYPES.ValidationReporter, {
+    useClass: ValidationReporter,
+  });
+
+  container.register(TYPES.ValidationOrchestrator, {
+    useClass: ValidationOrchestrator,
+  });
+
   // Register validators
   container.register(TYPES.Validators, {
     useFactory: () => createValidators(),
-  });
-
-  // Register main validation class
-  container.register(TYPES.Validation, {
-    useClass: Validation,
   });
 }

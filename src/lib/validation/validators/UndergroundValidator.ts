@@ -7,7 +7,6 @@ import { placementRule } from "@/lib/types/acs";
 import type { GroundArea } from "@/lib/segmentation/SegmentationProvider";
 import { injectable, inject } from "tsyringe";
 import { TYPES } from "@/lib/di/types";
-import type Validation from "../Validation";
 import type GroundService from "../GroundService";
 
 const undergroundRuleSchema = z.object({
@@ -19,10 +18,9 @@ type UndergroundRule = z.infer<typeof undergroundRuleSchema>;
 @injectable()
 export default class UndergroundValidator extends Validator<UndergroundRule> {
   constructor(
-    @inject(TYPES.Validation) validation: Validation,
     @inject(TYPES.GroundService) private groundService: GroundService
   ) {
-    super(validation);
+    super();
   }
 
   protected validatesRule(rule: ResolvedRule): boolean {

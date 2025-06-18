@@ -1,5 +1,7 @@
 export const TYPES = {
-  Validation: "Validation",
+  ValidationOrchestrator: "ValidationOrchestrator",
+  ValidationExecutor: "ValidationExecutor",
+  ValidationReporter: "ValidationReporter",
   GroundService: "GroundService",
   SegmentationService: "SegmentationService",
   SizeService: "SizeService",

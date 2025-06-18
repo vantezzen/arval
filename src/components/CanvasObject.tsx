@@ -2,10 +2,10 @@ import type Object from "@/lib/dto/Object";
 import { useEffect, useState } from "react";
 import { useUpdate } from "react-use";
 import ValidationErrors from "./ValidationErrors";
-import type { ValidationResult } from "@/lib/validation/Validation";
+import type { ValidationResult } from "@/lib/validation/ValidationReporter";
 import HighlightArea from "./HighlightAreas";
 import { container } from "tsyringe";
-import type Validation from "@/lib/validation/Validation";
+import type ValidationOrchestrator from "@/lib/validation/ValidationOrchestrator";
 import { TYPES } from "@/lib/di/types";
 import { useObjectStore } from "@/lib/stores/objectStore";
 import OBJECTS from "@/lib/config/objects";
@@ -20,7 +20,9 @@ import {
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
-  const validation = container.resolve<Validation>(TYPES.Validation);
+  const validation = container.resolve<ValidationOrchestrator>(
+    TYPES.ValidationOrchestrator
+  );
   const [validationResult, setValidationResult] = useState<ValidationResult>({
     errors: [],
     highlightedAreas: [],
@@ -41,7 +43,7 @@ function CanvasObject({ object }: { object: Object }) {
     return () => {
       object.off("update", onUpdate);
     };
-  }, [object, update]);
+  }, [object, update, validation]);
   const isEditing = objectStore.editingObject?.id === object.id;
 
   return (

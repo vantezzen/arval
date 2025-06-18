@@ -5,7 +5,6 @@ import type Object from "@/lib/dto/Object";
 import { placementRule } from "@/lib/types/acs";
 import { injectable, inject } from "tsyringe";
 import { TYPES } from "@/lib/di/types";
-import type Validation from "../Validation";
 import type SegmentationProvider from "@/lib/segmentation/SegmentationProvider";
 import type SizeService from "../SizeService";
 
@@ -19,12 +18,11 @@ type DistanceToRule = z.infer<typeof distanceToRuleSchema>;
 @injectable()
 export default class DistanceToValidator extends Validator<DistanceToRule> {
   constructor(
-    @inject(TYPES.Validation) validation: Validation,
     @inject(TYPES.SegmentationService)
     private segmentation: SegmentationProvider,
     @inject(TYPES.SizeService) private sizeService: SizeService
   ) {
-    super(validation);
+    super();
   }
 
   protected validatesRule(rule: ResolvedRule): boolean {

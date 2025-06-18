@@ -1,11 +1,8 @@
 import type { ResolvedRule } from "@/lib/types/rules";
-import type Validation from "../Validation";
 import type Object from "@/lib/dto/Object";
 import type { ZodObject } from "zod/v4";
 import type { ValidationResult } from "@/lib/types/interface";
 import type { Area } from "@/lib/types/area";
-import { inject } from "tsyringe";
-import { TYPES } from "@/lib/di/types";
 
 export type PassResult = {
   passes: boolean;
@@ -13,8 +10,6 @@ export type PassResult = {
 };
 
 export default abstract class Validator<T extends ResolvedRule> {
-  constructor(@inject(TYPES.Validation) protected validation: Validation) {}
-
   /**
    * Indicate if this validator is responsible for validating this rule.
    * The rule may not contain any of the validator-specific elements so the rule type
