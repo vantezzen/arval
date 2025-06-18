@@ -1,13 +1,12 @@
 import type { ResolvedRule } from "@/lib/types/rules";
 import type Object from "@/lib/dto/Object";
 import type { ZodObject } from "zod/v4";
-import type { ValidationResult } from "@/lib/types/interface";
-import type { Area } from "@/lib/types/area";
+import type {
+  ValidationCheckResult,
+  ValidationPassResult,
+} from "@/lib/types/validation";
 
-export type PassResult = {
-  passes: boolean;
-  highlightedAreas?: Area[];
-};
+export type PassResult = ValidationPassResult;
 
 export default abstract class Validator<T extends ResolvedRule> {
   /**
@@ -25,12 +24,15 @@ export default abstract class Validator<T extends ResolvedRule> {
   /**
    * Validate a rule against an object
    */
-  protected abstract passes(rule: T, object: Object): Promise<PassResult>;
+  protected abstract passes(
+    rule: T,
+    object: Object
+  ): Promise<ValidationPassResult>;
 
   public async validate(
     rule: ResolvedRule,
     object: Object
-  ): Promise<ValidationResult> {
+  ): Promise<ValidationCheckResult> {
     if (!this.validatesRule(rule)) {
       return {};
     }

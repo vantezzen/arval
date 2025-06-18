@@ -1,6 +1,6 @@
-import type { ValidationError } from "../types/interface";
+import type { ValidationError } from "@/lib/types/validation";
 import { injectable } from "tsyringe";
-import type { ResolvedRuleset } from "../types/rules";
+import type { ResolvedRuleset } from "@/lib/types/rules";
 
 @injectable()
 export default class ErrorMessageService {

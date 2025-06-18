@@ -1,14 +1,9 @@
 import type Object from "@/lib/dto/Object";
 import type { ResolvedRuleset } from "@/lib/types/rules";
-import type { ValidationError } from "@/lib/types/interface";
+import type { ValidationCheckResult } from "@/lib/types/validation";
 import type Validator from "./validators/Validator";
 import { injectable } from "tsyringe";
 import createValidators from "./validators";
-
-export type ValidationExecutionResult = {
-  error?: ValidationError;
-  highlightedAreas?: any[];
-};
 
 @injectable()
 export default class ValidationExecutor {
@@ -20,12 +15,12 @@ export default class ValidationExecutor {
    *
    * @param object - The object to validate
    * @param rules - The resolved ruleset for the object
-   * @returns Promise<ValidationExecutionResult[]> - Array of validation results
+   * @returns Promise<ValidationCheckResult[]> - Array of validation results
    */
   async execute(
     object: Object,
     rules: ResolvedRuleset
-  ): Promise<ValidationExecutionResult[]> {
+  ): Promise<ValidationCheckResult[]> {
     const validators = createValidators();
 
     const validationPromises = this.createValidationPromises(
@@ -45,13 +40,13 @@ export default class ValidationExecutor {
    * @param object - The object to validate
    * @param rules - The resolved ruleset
    * @param validators - Array of available validators
-   * @returns Promise<ValidationExecutionResult>[] - Array of validation promises
+   * @returns Promise<ValidationCheckResult>[] - Array of validation promises
    */
   private createValidationPromises(
     object: Object,
     rules: ResolvedRuleset,
     validators: Validator<any>[]
-  ): Promise<ValidationExecutionResult>[] {
+  ): Promise<ValidationCheckResult>[] {
     return rules.placement.flatMap((rule) =>
       validators.map((validator) => validator.validate(rule, object))
     );

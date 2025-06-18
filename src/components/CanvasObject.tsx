@@ -2,7 +2,7 @@ import type Object from "@/lib/dto/Object";
 import { useEffect, useState } from "react";
 import { useUpdate } from "react-use";
 import ValidationErrors from "./ValidationErrors";
-import type { ValidationResult } from "@/lib/validation/ValidationReporter";
+import type { ValidationResult } from "@/lib/types/validation";
 import HighlightArea from "./HighlightAreas";
 import { container } from "tsyringe";
 import type ValidationOrchestrator from "@/lib/validation/ValidationOrchestrator";

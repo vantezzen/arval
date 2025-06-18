@@ -1,5 +1,5 @@
 import type Object from "@/lib/dto/Object";
-import type { ValidationResult } from "./ValidationReporter";
+import type { ValidationResult } from "@/lib/types/validation";
 import ValidationRuleResolver from "./ValidationRuleResolver";
 import ValidationExecutor from "./ValidationExecutor";
 import ValidationReporter from "./ValidationReporter";

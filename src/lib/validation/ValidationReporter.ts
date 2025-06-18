@@ -1,15 +1,12 @@
 import type { ResolvedRuleset } from "@/lib/types/rules";
-import type { ValidationExecutionResult } from "./ValidationExecutor";
 import type ErrorMessageService from "./ErrorMessageService";
 import { injectable, inject } from "tsyringe";
 import { TYPES } from "@/lib/di/types";
 import { getUniqueAreas } from "./utils";
-import type { Area } from "@/lib/types/area";
-
-export type ValidationResult = {
-  errors: string[];
-  highlightedAreas: Area[];
-};
+import type {
+  ValidationCheckResult,
+  ValidationResult,
+} from "@/lib/types/validation";
 
 @injectable()
 export default class ValidationReporter {
@@ -27,7 +24,7 @@ export default class ValidationReporter {
    * @returns ValidationResult - Formatted validation result with errors and highlighted areas
    */
   createReport(
-    results: ValidationExecutionResult[],
+    results: ValidationCheckResult[],
     rules: ResolvedRuleset
   ): ValidationResult {
     const errors = results.map((result) => result.error).filter(Boolean);
