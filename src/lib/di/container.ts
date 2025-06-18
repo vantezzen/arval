@@ -58,3 +58,46 @@ export function configureContainer() {
     useFactory: () => createValidators(),
   });
 }
+
+export function configureTestContainer() {
+  container.register(TYPES.SegmentationService, {
+    useClass: GeoJsonSegmentationProvider,
+  });
+
+  container.register(TYPES.GroundService, {
+    useClass: GroundService,
+  });
+
+  container.register(TYPES.SizeService, {
+    useClass: SizeService,
+  });
+
+  container.register(TYPES.ValidationRuleResolver, {
+    useClass: ValidationRuleResolver,
+  });
+
+  container.register(TYPES.ErrorMessageService, {
+    useClass: ErrorMessageService,
+  });
+
+  container.register(TYPES.TransformationValidator, {
+    useClass: TransformationValidator,
+  });
+
+  container.register(TYPES.ValidationExecutor, {
+    useClass: ValidationExecutor,
+  });
+
+  container.register(TYPES.ValidationReporter, {
+    useClass: ValidationReporter,
+  });
+
+  container.register(TYPES.ValidationOrchestrator, {
+    useClass: ValidationOrchestrator,
+  });
+
+  // Register validators
+  container.register(TYPES.Validators, {
+    useFactory: () => createValidators(),
+  });
+}

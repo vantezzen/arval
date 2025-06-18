@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -20,5 +21,11 @@ export default defineConfig({
 
   server: {
     allowedHosts: [".ngrok-free.app"],
+  },
+
+  test: {
+    globals: true,
+    environment: "node",
+    setupFiles: ["./src/test/setup.ts"],
   },
 });
