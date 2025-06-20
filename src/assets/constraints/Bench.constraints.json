@@ -19,6 +19,12 @@
       "tags": ["street"],
       "distance": 1,
       "reason": "1 Meter von einer Straße entfernt liegen, damit die Gefahr bei Unfällen minimiert wird"
+    },
+    {
+      "action": "forbid",
+      "subject": "underground",
+      "tags": ["asphalted"],
+      "reason": "vollständig auf Gras platziert werden, da es sonst Fahrzeuge oder Fußgänger blockiert"
     }
   ]
 }
