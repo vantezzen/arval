@@ -22,10 +22,7 @@ describe("UndergroundValidator", () => {
   beforeEach(() => {
     container.clearInstances();
     mockSegmentationProvider = new MockSegmentationProvider();
-    mockGroundService = new MockGroundService(
-      mockSegmentationProvider,
-      {} as any
-    );
+    mockGroundService = new MockGroundService();
     container.registerInstance(
       "SegmentationProvider",
       mockSegmentationProvider

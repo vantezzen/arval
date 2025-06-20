@@ -36,10 +36,7 @@ describe("ValidationOrchestrator", () => {
     mockRuleResolver = new MockValidationRuleResolver();
     mockSegmentationProvider = new MockSegmentationProvider();
     mockSizeService = new MockSizeService();
-    mockGroundService = new MockGroundService(
-      mockSegmentationProvider,
-      mockSizeService as any
-    );
+    mockGroundService = new MockGroundService();
 
     // Register mocks in DI container
     container.registerInstance(TYPES.ValidationRuleResolver, mockRuleResolver);
