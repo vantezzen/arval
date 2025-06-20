@@ -3,7 +3,6 @@ import type { Area, CircleArea } from "@/lib/types/area";
 import type { GroundArea } from "@/lib/segmentation/SegmentationProvider";
 import type { ResolvedRuleset } from "@/lib/types/rules";
 import type SegmentationProvider from "@/lib/segmentation/SegmentationProvider";
-import type SizeService from "@/lib/validation/SizeService";
 import { MockObject } from "@/test/utils/testUtils";
 
 export class MockSegmentationProvider implements SegmentationProvider {
@@ -39,7 +38,7 @@ export class MockSegmentationProvider implements SegmentationProvider {
   }
 
   getClosestObjectByTag(
-    position: Vector3,
+    _position: Vector3,
     tags: string[]
   ): { area?: Area; distance: number } | undefined {
     let closest: { area?: Area; distance: number } | undefined = undefined;
@@ -98,10 +97,7 @@ export class MockSizeService {
 export class MockGroundService {
   private groundTypes: Map<string, GroundArea[]> = new Map();
 
-  constructor(
-    private segmentationService: SegmentationProvider,
-    private sizeService: SizeService
-  ) {}
+  constructor() {}
 
   setGroundTypes(objectId: string, types: GroundArea[]) {
     this.groundTypes.set(objectId, types);
