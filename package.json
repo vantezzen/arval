@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build-schema": "tsx src/scripts/generateSchemas.ts",
+    "performance-file": "tsx src/scripts/generatePerformanceFile.ts",
     "test": "vitest run",
     "coverage": "vitest run --coverage"
   },

@@ -9,6 +9,8 @@ import type {
 export type PassResult = ValidationPassResult;
 
 export default abstract class Validator<T extends ResolvedRule> {
+  protected ruleValidationResult: Map<ResolvedRule, boolean> = new Map();
+
   /**
    * Indicate if this validator is responsible for validating this rule.
    * The rule may not contain any of the validator-specific elements so the rule type
@@ -37,12 +39,15 @@ export default abstract class Validator<T extends ResolvedRule> {
       return {};
     }
 
-    const schema = this.getRuleSchema();
-    const parsedSchema = schema.safeParse(rule);
-    if (!parsedSchema.success) {
-      console.warn("Invalid Rule definition", rule, parsedSchema.error);
+    if (!this.ruleValidationResult.has(rule)) {
+      const schema = this.getRuleSchema();
+      const parsedSchema = schema.safeParse(rule);
+      this.ruleValidationResult.set(rule, parsedSchema.success);
+      if (!parsedSchema.success) {
+        console.warn("Invalid Rule definition", rule, parsedSchema.error);
 
-      return {};
+        return {};
+      }
     }
 
     const { passes: isCheckPassed, highlightedAreas } = await this.passes(

@@ -27,5 +27,10 @@ export default defineConfig({
     globals: true,
     environment: "node",
     setupFiles: ["./src/test/setup.ts"],
+
+    coverage: {
+      reporter: ["html"],
+      include: ["src/lib/validation"],
+    },
   },
 });

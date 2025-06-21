@@ -33,10 +33,17 @@ function CanvasObject({ object }: { object: Object }) {
     const onUpdate = () => {
       update();
 
-      validation.validate(object).then((errors) => {
-        console.log("validation", errors);
-        setValidationResult(errors);
-      });
+      if (!validation.isValidationInProgress(object.id)) {
+        validation.debouncedValidate(object).then((errors) => {
+          if (errors === null) {
+            // We've been debounced, so we don't update the state
+            return;
+          }
+
+          // console.log("validation", errors);
+          setValidationResult(errors);
+        });
+      }
     };
 
     object.on("update", onUpdate);

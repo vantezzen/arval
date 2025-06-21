@@ -1,4 +1,4 @@
-import { container } from "tsyringe";
+import { container, Lifecycle } from "tsyringe";
 import { TYPES } from "./types";
 import GeoJsonSegmentationProvider from "../segmentation/geojson/GeoJsonSegmentationProvider";
 import GroundService from "../validation/GroundService";
@@ -11,6 +11,7 @@ import ValidationOrchestrator from "../validation/ValidationOrchestrator";
 import ValidationExecutor from "../validation/ValidationExecutor";
 import ValidationReporter from "../validation/ValidationReporter";
 import InteractionService from "../interaction/InteractionService";
+import ValidationPerformance from "../validation/ValidationPerformance";
 
 export function configureContainer() {
   container.register(TYPES.SegmentationService, {
@@ -25,13 +26,29 @@ export function configureContainer() {
     useClass: InteractionService,
   });
 
-  container.register(TYPES.SizeService, {
-    useClass: SizeService,
-  });
+  container.register(
+    TYPES.SizeService,
+    {
+      useClass: SizeService,
+    },
+    {
+      lifecycle: Lifecycle.Singleton,
+    }
+  );
 
   container.register(TYPES.ValidationRuleResolver, {
     useClass: ValidationRuleResolver,
   });
+
+  container.register(
+    TYPES.ValidationPerformance,
+    {
+      useClass: ValidationPerformance,
+    },
+    {
+      lifecycle: Lifecycle.Singleton,
+    }
+  );
 
   container.register(TYPES.ErrorMessageService, {
     useClass: ErrorMessageService,
@@ -49,9 +66,15 @@ export function configureContainer() {
     useClass: ValidationReporter,
   });
 
-  container.register(TYPES.ValidationOrchestrator, {
-    useClass: ValidationOrchestrator,
-  });
+  container.register(
+    TYPES.ValidationOrchestrator,
+    {
+      useClass: ValidationOrchestrator,
+    },
+    {
+      lifecycle: Lifecycle.Singleton,
+    }
+  );
 
   // Register validators
   container.register(TYPES.Validators, {
@@ -68,9 +91,15 @@ export function configureTestContainer() {
     useClass: GroundService,
   });
 
-  container.register(TYPES.SizeService, {
-    useClass: SizeService,
-  });
+  container.register(
+    TYPES.SizeService,
+    {
+      useClass: SizeService,
+    },
+    {
+      lifecycle: Lifecycle.Singleton,
+    }
+  );
 
   container.register(TYPES.ValidationRuleResolver, {
     useClass: ValidationRuleResolver,
