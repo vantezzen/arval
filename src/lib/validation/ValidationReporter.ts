@@ -7,16 +7,12 @@ import type {
   ValidationCheckResult,
   ValidationResult,
 } from "@/lib/types/validation";
-import type ValidationPerformance from "./ValidationPerformance";
 
 @injectable()
 export default class ValidationReporter {
   constructor(
     @inject(TYPES.ErrorMessageService)
-    private errorMessageService: ErrorMessageService,
-
-    @inject(TYPES.ValidationPerformance)
-    private performance: ValidationPerformance
+    private errorMessageService: ErrorMessageService
   ) {}
 
   /**
@@ -31,7 +27,6 @@ export default class ValidationReporter {
     results: ValidationCheckResult[],
     rules: ResolvedRuleset
   ): ValidationResult {
-    const timing = this.performance.start("createReport");
     const errors = results.map((result) => result.error).filter(Boolean);
 
     const highlightedAreas = getUniqueAreas(
@@ -45,9 +40,6 @@ export default class ValidationReporter {
       errors: this.errorMessageService.createErrorMessage(errors, rules),
       highlightedAreas,
     };
-
-    this.performance.end(timing);
-    this.performance.runComplete();
 
     return report;
   }

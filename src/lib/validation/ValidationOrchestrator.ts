@@ -6,6 +6,7 @@ import ValidationReporter from "./ValidationReporter";
 import { injectable, inject } from "tsyringe";
 import { TYPES } from "@/lib/di/types";
 import { setCustomData } from "r3f-perf";
+import type ValidationPerformance from "./ValidationPerformance";
 
 @injectable()
 export default class ValidationOrchestrator {
@@ -20,7 +21,9 @@ export default class ValidationOrchestrator {
     @inject(TYPES.ValidationExecutor)
     private executor: ValidationExecutor,
     @inject(TYPES.ValidationReporter)
-    private reporter: ValidationReporter
+    private reporter: ValidationReporter,
+    @inject(TYPES.ValidationPerformance)
+    private validationPerformance: ValidationPerformance
   ) {}
 
   /**
@@ -37,6 +40,7 @@ export default class ValidationOrchestrator {
 
     this.activeObjectSessions.add(object.id);
     const startTime = performance.now();
+    const timing = this.validationPerformance.start("validate");
     const rules = this.ruleResolver.resolveRulesetForObject(object.type);
     const validationResults = await this.executor.execute(object, rules);
     const report = this.reporter.createReport(validationResults, rules);
@@ -44,6 +48,8 @@ export default class ValidationOrchestrator {
     const runtime = performance.now() - startTime;
     setCustomData(runtime);
     this.activeObjectSessions.delete(object.id);
+    this.validationPerformance.end(timing);
+    this.validationPerformance.runComplete();
 
     return report;
   }

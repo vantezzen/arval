@@ -2,7 +2,7 @@ import { type ConstraintSet } from "@/lib/types/acs";
 import { resolve } from "path";
 import fs from "fs";
 
-const RULES = 100;
+const RULES = 500;
 
 const ruleSet: ConstraintSet = {
   name: "Der Performance Test",
@@ -34,6 +34,7 @@ for (let i = 0; i < RULES; i++) {
     action: randomEnum(actionEnum),
     subject: randomEnum(subjectEnum),
     tags: ["test", `rule-${i + 1}`],
+    distance: 5,
     reason: `Test rule ${i + 1}`,
     reasonType: "atomic",
   };
