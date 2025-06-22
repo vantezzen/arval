@@ -17,6 +17,7 @@ import {
   OutlineEffect,
   OverlayEffect,
 } from "@vantezzen/effectable-gltf";
+import { useCreativityStore } from "@/lib/stores/creativityLevelStore";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
@@ -28,6 +29,7 @@ function CanvasObject({ object }: { object: Object }) {
     highlightedAreas: [],
   });
   const objectStore = useObjectStore();
+  const creativityLevel = useCreativityStore((state) => state.creativityLevel);
 
   useEffect(() => {
     const onUpdate = () => {
@@ -67,12 +69,14 @@ function CanvasObject({ object }: { object: Object }) {
         }}
       >
         {isEditing && <OutlineEffect color="white" />}
-        {validationResult.errors.length > 0 && isEditing && (
-          <OverlayEffect color="red" opacity={0.3} />
-        )}
+        {validationResult.errors.length > 0 &&
+          isEditing &&
+          creativityLevel < 1 && <OverlayEffect color="red" opacity={0.3} />}
       </EffectableGltf>
-      <HighlightArea areas={validationResult.highlightedAreas} />
-      {isEditing && (
+      {creativityLevel < 1 && (
+        <HighlightArea areas={validationResult.highlightedAreas} />
+      )}
+      {isEditing && creativityLevel < 2 && (
         <>
           <ValidationErrors errors={validationResult.errors} object={object} />
         </>

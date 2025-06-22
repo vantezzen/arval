@@ -2,7 +2,7 @@ import { type ConstraintSet } from "@/lib/types/acs";
 import { resolve } from "path";
 import fs from "fs";
 
-const RULES = 500;
+const RULES = 10;
 
 const ruleSet: ConstraintSet = {
   name: "Der Performance Test",

@@ -22,6 +22,7 @@ import { TYPES } from "@/lib/di/types";
 import { IS_AR_ENABLED } from "@/lib/config/static";
 import AddObjectModal from "./addModal/AddObjectModal";
 import { useThreeStore } from "@/lib/stores/threeStore";
+import CreativityLevel from "./CreativityLevel";
 
 function AppCanvasContent() {
   const [interaction] = useState(() =>
@@ -108,6 +109,7 @@ function AppCanvas() {
       )}
 
       <AddObjectModal />
+      <CreativityLevel />
     </KeyboardControls>
   );
 }
