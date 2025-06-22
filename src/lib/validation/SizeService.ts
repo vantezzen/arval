@@ -34,10 +34,14 @@ export default class SizeService {
           const size = new Vector3();
           box.getSize(size);
           this.sizeCache.set(modelUrl, size.clone());
+          this.activeLoaders.delete(modelUrl);
           resolve(size);
         },
         undefined,
-        (err) => reject(err)
+        (err) => {
+          this.activeLoaders.delete(modelUrl);
+          reject(err);
+        }
       );
     });
     this.activeLoaders.set(modelUrl, loader);

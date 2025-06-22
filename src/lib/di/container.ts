@@ -125,6 +125,10 @@ export function configureTestContainer() {
     useClass: ValidationOrchestrator,
   });
 
+  container.register(TYPES.ValidationPerformance, {
+    useClass: ValidationPerformance,
+  });
+
   // Register validators
   container.register(TYPES.Validators, {
     useFactory: () => createValidators(),

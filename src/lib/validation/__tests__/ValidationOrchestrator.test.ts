@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { container } from "tsyringe";
 import ValidationOrchestrator from "../ValidationOrchestrator";
 import {
@@ -20,6 +20,7 @@ import type Object from "@/lib/dto/Object";
 import ValidationExecutor from "../ValidationExecutor";
 import ValidationReporter from "../ValidationReporter";
 import ErrorMessageService from "../ErrorMessageService";
+import ValidationPerformance from "../ValidationPerformance";
 
 describe("ValidationOrchestrator", () => {
   let orchestrator: ValidationOrchestrator;
@@ -57,6 +58,10 @@ describe("ValidationOrchestrator", () => {
     container.registerInstance(
       TYPES.ValidationReporter,
       new ValidationReporter(new ErrorMessageService())
+    );
+    container.registerInstance(
+      TYPES.ValidationPerformance,
+      new ValidationPerformance()
     );
 
     // Resolve orchestrator from DI
@@ -212,6 +217,14 @@ describe("ValidationOrchestrator", () => {
         highlightedAreas: [],
       });
     });
+
+    it("should throw if validation is already in progress for the same object", async () => {
+      orchestrator["activeObjectSessions"].add(object.id);
+      await expect(orchestrator.validate(object)).rejects.toThrow(
+        `Validation already in progress for object ${object.id}`
+      );
+      orchestrator["activeObjectSessions"].delete(object.id);
+    });
   });
 
   describe("edge cases", () => {
@@ -258,6 +271,129 @@ describe("ValidationOrchestrator", () => {
 
       // Should handle invalid schemas gracefully and skip validation
       expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("debouncedValidate", () => {
+    let originalPerformanceNow: () => number;
+    beforeEach(() => {
+      vi.useFakeTimers();
+      originalPerformanceNow = performance.now;
+      performance.now = Date.now;
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+      performance.now = originalPerformanceNow;
+    });
+
+    it("should run validation immediately if enough time has passed", async () => {
+      const spy = vi.spyOn(orchestrator, "validate").mockResolvedValue({
+        errors: [],
+        highlightedAreas: [],
+      });
+      const result = await orchestrator.debouncedValidate(object, 200);
+      expect(result).toEqual({ errors: [], highlightedAreas: [] });
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("should return null when called again quickly", async () => {
+      vi.useRealTimers();
+      const spy = vi.spyOn(orchestrator, "validate").mockResolvedValue({
+        errors: [],
+        highlightedAreas: [],
+      });
+      const debounceTime = 10;
+      // First call should run immediately
+      const firstResult = await orchestrator.debouncedValidate(
+        object,
+        debounceTime
+      );
+      expect(firstResult).toEqual({ errors: [], highlightedAreas: [] });
+      // Second call should schedule validation and return Promise
+      const secondPromise = orchestrator.debouncedValidate(
+        object,
+        debounceTime
+      );
+      expect(secondPromise).toBeInstanceOf(Promise);
+      // Wait for the scheduled validation to run
+      await new Promise((r) => setTimeout(r, 20));
+      const secondResult = await secondPromise;
+      expect(secondResult).toEqual({ errors: [], highlightedAreas: [] });
+      expect(spy).toHaveBeenCalledTimes(2);
+      vi.useFakeTimers();
+    });
+
+    it("should return null when called a third time within debounce window", async () => {
+      vi.useRealTimers();
+      const spy = vi.spyOn(orchestrator, "validate").mockResolvedValue({
+        errors: [],
+        highlightedAreas: [],
+      });
+      const debounceTime = 10;
+      // First call should run immediately
+      const firstResult = await orchestrator.debouncedValidate(
+        object,
+        debounceTime
+      );
+      expect(firstResult).toEqual({ errors: [], highlightedAreas: [] });
+      // Second call should schedule validation
+      const secondPromise = orchestrator.debouncedValidate(
+        object,
+        debounceTime
+      );
+      // Third call should return null (already pending)
+      const thirdResult = await orchestrator.debouncedValidate(
+        object,
+        debounceTime
+      );
+      expect(thirdResult).toBeNull();
+      // Wait for the scheduled validation to run
+      await new Promise((r) => setTimeout(r, 20));
+      const secondResult = await secondPromise;
+      expect(secondResult).toEqual({ errors: [], highlightedAreas: [] });
+      expect(spy).toHaveBeenCalledTimes(2);
+      vi.useFakeTimers();
+    });
+
+    it("should handle errors gracefully", async () => {
+      vi.useRealTimers();
+      const spy = vi
+        .spyOn(orchestrator, "validate")
+        .mockRejectedValue(new Error("fail"));
+      const debounceTime = 10;
+      // First call should run immediately and return null (error is caught)
+      const firstResult = await orchestrator.debouncedValidate(
+        object,
+        debounceTime
+      );
+      expect(firstResult).toBeNull();
+      // Second call should schedule validation and handle error internally
+      const secondPromise = orchestrator.debouncedValidate(
+        object,
+        debounceTime
+      );
+      // Wait for the scheduled validation to run
+      await new Promise((r) => setTimeout(r, 20));
+      const secondResult = await secondPromise;
+      expect(secondResult).toBeNull(); // Error is caught and returns null
+      expect(spy).toHaveBeenCalledTimes(2);
+      vi.useFakeTimers();
+    });
+  });
+
+  describe("isValidationInProgress", () => {
+    it("should return false before validation", () => {
+      expect(orchestrator.isValidationInProgress(object.id)).toBe(false);
+    });
+    it("should return true during validation", async () => {
+      orchestrator["activeObjectSessions"].add(object.id);
+      expect(orchestrator.isValidationInProgress(object.id)).toBe(true);
+      orchestrator["activeObjectSessions"].delete(object.id);
+    });
+    it("should return false after validation", async () => {
+      orchestrator["activeObjectSessions"].add(object.id);
+      orchestrator["activeObjectSessions"].delete(object.id);
+      expect(orchestrator.isValidationInProgress(object.id)).toBe(false);
     });
   });
 });
