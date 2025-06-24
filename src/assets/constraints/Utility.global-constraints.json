@@ -1,0 +1,48 @@
+{
+  "$schema": "https://arval.vantezzen.io/schemas/agcs.schema.json",
+  "version": 1,
+  "name": "Utility Flächenbeschränkungen",
+  "scope": "global",
+
+  "rules": [
+    {
+      "action": "forbid",
+      "subject": "area",
+      "appliesToTags": ["plant", "furniture"],
+
+      "reason": "Unter dieser Fläche befinden sich Versorgungsleitungen, die nicht blockiert werden dürfen.",
+      "reasonType": "full",
+
+      "area": {
+        "type": "polygon",
+        "coordinates": [
+          [5, 0],
+          [5, 10],
+          [6, 10],
+          [6, 0],
+          [5, 0]
+        ]
+      }
+    },
+
+    {
+      "action": "forbid",
+      "subject": "area",
+      "appliesToTags": ["plant", "furniture"],
+
+      "reason": "An dieser Stelle findet Samstags der Wochenmarkt statt.",
+      "reasonType": "full",
+
+      "area": {
+        "type": "polygon",
+        "coordinates": [
+          [0, -5],
+          [0, -10],
+          [10, -10],
+          [10, -5],
+          [0, -5]
+        ]
+      }
+    }
+  ]
+}

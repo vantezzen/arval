@@ -9,6 +9,7 @@ const COLOR_MAP: Record<string, string> = {
   sidewalk: "#cccccc",
   greenVerge: "#7dbf62",
   roadCentre: "#000000",
+  junction: "#ffcc00",
 };
 
 const PolygonMesh = ({

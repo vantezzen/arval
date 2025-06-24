@@ -1,5 +1,7 @@
 {
   "$schema": "https://arval.vantezzen.io/schemas/acs.schema.json",
+  "version": 1,
+
   "name": "Die Sitzbank",
   "scope": "object",
   "tags": ["bench", "furniture", "seat"],
@@ -22,9 +24,16 @@
     },
     {
       "action": "forbid",
+      "subject": "distanceTo",
+      "tags": ["junction"],
+      "distance": 5,
+      "reason": "5 Meter von einer Kreuzung entfernt liegen, um die freie Sicht zu gewährleisten"
+    },
+    {
+      "action": "forbid",
       "subject": "underground",
       "tags": ["asphalted"],
-      "reason": "vollständig auf Gras platziert werden, da es sonst Fahrzeuge oder Fußgänger blockiert"
+      "reason": "vollständig auf nicht-asphaltierten Stellen liegen, da es sonst Fahrzeuge oder Fußgänger blockiert"
     }
   ]
 }

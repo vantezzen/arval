@@ -4,6 +4,7 @@ export enum GroundType {
   sidewalk = "sidewalk",
   grass = "grass",
   building = "building",
+  junction = "junction",
 
   unknown = "unknown",
 }

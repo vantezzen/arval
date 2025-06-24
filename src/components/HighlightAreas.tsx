@@ -27,7 +27,7 @@ const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
     <mesh
       geometry={geometry}
       position={[0, HEIGHT, 0]}
-      rotation={[-Math.PI / 2, 0, 0]}
+      rotation={[Math.PI / 2, 0, 0]}
       renderOrder={1}
     >
       <meshBasicMaterial

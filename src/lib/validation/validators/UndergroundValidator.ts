@@ -12,6 +12,7 @@ import type GroundService from "../GroundService";
 const undergroundRuleSchema = z.object({
   ...placementRule.shape,
   tags: z.string().array(),
+  type: z.literal("full").optional(),
 });
 type UndergroundRule = z.infer<typeof undergroundRuleSchema>;
 
@@ -36,6 +37,18 @@ export default class UndergroundValidator extends Validator<UndergroundRule> {
     object: Object
   ): Promise<PassResult> {
     const currentGroundTypes = await this.groundService.getGroundType(object);
+
+    if (rule.type === "full") {
+      // If the rule is of type "full", we check if *all* objects match the tags
+      const isFullMatch = currentGroundTypes.every((ground) =>
+        isTagMatched(rule.tags, ground.tags)
+      );
+      return {
+        passes: isFullMatch,
+        highlightedAreas: this.getHighlightedAreas(currentGroundTypes, rule),
+      };
+    }
+
     const mergedTags = [
       ...new Set(currentGroundTypes.map((ground) => ground.tags).flat()),
     ];

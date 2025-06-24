@@ -6,6 +6,13 @@ const GROUND_TAGS: Record<GroundType, string[]> = {
   [GroundType.sidewalk]: ["sidewalk", "asphalted", "walkable"],
   [GroundType.grass]: ["grass", "nature", "walkable"],
   [GroundType.building]: ["building", "asphalted", "tall"],
+  [GroundType.junction]: [
+    "junction",
+    "asphalted",
+    "intersection",
+    "street",
+    "bikeable",
+  ],
   [GroundType.unknown]: ["unknown"],
 };
 

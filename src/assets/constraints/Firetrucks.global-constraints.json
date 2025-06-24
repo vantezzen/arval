@@ -1,5 +1,6 @@
 {
   "$schema": "https://arval.vantezzen.io/schemas/agcs.schema.json",
+  "version": 1,
   "name": "Feuerwehr Wendekreise",
   "scope": "global",
 

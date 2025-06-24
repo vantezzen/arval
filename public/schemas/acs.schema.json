@@ -40,6 +40,10 @@
     "$schema": {
       "type": "string",
       "description": "Schema File."
+    },
+
+    "version": {
+      "const": 1
     }
   },
 

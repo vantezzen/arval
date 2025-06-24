@@ -42,6 +42,7 @@ export default class GeoJsonSegmentationProvider
       roadCentre: GroundType.street,
       roadway: GroundType.street,
       bikeLane: GroundType.bikeLane,
+      junction: GroundType.junction,
     };
 
     return CONVERSION[featureType] ?? GroundType.unknown;

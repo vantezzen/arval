@@ -1,0 +1,32 @@
+{
+  "$schema": "https://arval.vantezzen.io/schemas/acs.schema.json",
+  "version": 1,
+  "name": "Der Zebrastreifen",
+  "scope": "object",
+  "tags": ["zebra-crossing", "crosswalk", "pedestrian", "street", "flat"],
+
+  "transform": [
+    {
+      "action": "allow-only",
+      "subject": "rotation",
+      "axes": ["y"]
+    }
+  ],
+
+  "placement": [
+    {
+      "action": "allow-only",
+      "subject": "distanceTo",
+      "tags": ["street"],
+      "distance": 1,
+      "reason": "maximal 1 Meter von einer Straße entfernt liegen"
+    },
+    {
+      "action": "allow-only",
+      "subject": "underground",
+      "tags": ["street"],
+      "type": "full",
+      "reason": "vollständig auf einer Straße platziert werden, um die Sicherheit der Fußgänger zu gewährleisten"
+    }
+  ]
+}

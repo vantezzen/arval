@@ -3,7 +3,12 @@ import Object from "../dto/Object";
 import { Euler, Vector3 } from "three";
 
 const EXAMPLE_OBJECTS = [
-  new Object("bench", new Vector3(1, 0, 0), new Euler(), new Vector3(1, 1, 1)),
+  new Object(
+    "zebraCrossing",
+    new Vector3(1, 0, 0),
+    new Euler(),
+    new Vector3(0.75, 0.75, 0.75)
+  ),
   new Object("bench", new Vector3(1, 0, 5), new Euler(), new Vector3(1, 1, 1)),
   // new Object("tree", new Vector3(2, 0, 2), new Euler(), new Vector3(1, 1, 1)),
 ];

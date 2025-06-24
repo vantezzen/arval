@@ -30,7 +30,7 @@ const SpinningModel = ({ url }: { url: string }) => {
   });
 
   return (
-    <group scale={[scale, scale, scale]}>
+    <group scale={[scale, scale, scale]} rotation={[0.5, 0, 0]}>
       <primitive object={scene} ref={modelRef} />
     </group>
   );
@@ -39,8 +39,8 @@ const SpinningModel = ({ url }: { url: string }) => {
 function ObjectDemo({ url }: { url: string }) {
   return (
     <Canvas>
-      <ambientLight intensity={0.5} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+      <ambientLight intensity={0.9} />
+      <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} />
       <pointLight position={[-10, -10, -10]} />
       <Suspense fallback={null}>
         <SpinningModel url={url} />
