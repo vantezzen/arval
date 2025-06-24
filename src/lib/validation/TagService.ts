@@ -9,7 +9,6 @@ export default class TagService {
   }
 
   getObjectTags(objectId: string): string[] {
-    console.log("Getting tags", this.objectTags, objectId);
     return this.objectTags[objectId] || [];
   }
 }

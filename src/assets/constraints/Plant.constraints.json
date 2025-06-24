@@ -19,7 +19,7 @@
       "action": "allow-only",
       "subject": "intersection",
       "tags": ["plantbed"],
-      "reason": "in einem Pflanzbeet platziert werden, um die Sicherheit der Fußgänger zu gewährleisten"
+      "reason": "in einem Pflanzbeet platziert werden, damit es vor Fahrzeugen geschützt ist"
     }
   ]
 }

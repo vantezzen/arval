@@ -40,11 +40,6 @@ export default class IntersectionValidator extends Validator<IntersectionRule> {
     const matchingIntersections = intersections.filter((intersection) =>
       intersection.tags.some((tag) => rule.tags.includes(tag))
     );
-    console.log(
-      `IntersectionValidator: Found ${matchingIntersections.length} matching intersections for object ${object.id} with tags ${rule.tags.join(", ")}`,
-      intersections,
-      matchingIntersections
-    );
 
     return {
       passes: matchingIntersections.length > 0,

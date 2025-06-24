@@ -31,19 +31,12 @@ export default class IntersectionService {
       const otherCornerPoints =
         await this.sizeService.getObjectCornerPoints(otherObject);
 
-      console.log(
-        `Calculating intersection for ${object.id} with ${otherObject.id}`,
-        cornerPoints,
-        otherCornerPoints
-      );
-
       const intersectionArea = this.calculateIntersectionArea(
         cornerPoints,
         otherCornerPoints
       );
 
       if (intersectionArea > 0) {
-        console.log("Intersection!", intersectionArea);
         const objectTags = this.tagService.getObjectTags(otherObject.type);
         intersections.push({
           object: otherObject,
