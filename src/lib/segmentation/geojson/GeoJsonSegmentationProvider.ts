@@ -108,7 +108,7 @@ export default class GeoJsonSegmentationProvider
 
   private getGroundFeatureAtLocation(position: Vector3) {
     const px = position.x;
-    const py = -position.z; // world Z corresponds to GeoJSON Y after our -90° X rotation
+    const py = position.z;
 
     for (const feature of this.data.features) {
       if (feature.geometry.type !== "Polygon") continue;

@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { container } from "tsyringe";
-import {
-  createTestObject,
-  createUndergroundRule,
-} from "@/test/utils/testUtils";
-import UndergroundValidator from "../UndergroundValidator";
+import { createTestObject, createSurfaceRule } from "@/test/utils/testUtils";
+import SurfaceValidator from "../SurfaceValidator";
 import type Object from "@/lib/dto/Object";
 import { Vector3 } from "three";
 import {
@@ -14,8 +11,8 @@ import {
 import type { GroundArea } from "@/lib/segmentation/SegmentationProvider";
 import { GroundType } from "@/lib/types/world";
 
-describe("UndergroundValidator", () => {
-  let validator: UndergroundValidator;
+describe("SurfaceValidator", () => {
+  let validator: SurfaceValidator;
   let mockSegmentationProvider: MockSegmentationProvider;
   let mockGroundService: MockGroundService;
 
@@ -28,10 +25,10 @@ describe("UndergroundValidator", () => {
       mockSegmentationProvider
     );
     container.registerInstance("GroundService", mockGroundService);
-    validator = container.resolve(UndergroundValidator);
+    validator = container.resolve(SurfaceValidator);
   });
 
-  describe("underground validation", () => {
+  describe("surface validation", () => {
     const groundAreas: GroundArea[] = [
       {
         type: GroundType.grass,
@@ -45,10 +42,10 @@ describe("UndergroundValidator", () => {
     ];
 
     it("should return false when ground type matches", async () => {
-      const rule = createUndergroundRule(
+      const rule = createSurfaceRule(
         ["grass"],
         "forbid",
-        "Underground validation rule"
+        "Surface validation rule"
       );
       const object = createTestObject(
         "tree",
@@ -62,7 +59,7 @@ describe("UndergroundValidator", () => {
 
       expect(result).toEqual({
         error: {
-          reason: "Underground validation rule",
+          reason: "Surface validation rule",
           type: "atomic",
         },
         highlightedAreas: [groundAreas[0].area],
@@ -70,10 +67,10 @@ describe("UndergroundValidator", () => {
     });
 
     it("should return true when ground type does not match", async () => {
-      const rule = createUndergroundRule(
+      const rule = createSurfaceRule(
         ["grass"],
         "forbid",
-        "Underground validation rule"
+        "Surface validation rule"
       );
       const object = createTestObject(
         "tree",
@@ -99,10 +96,10 @@ describe("UndergroundValidator", () => {
     });
 
     it("should return true when no ground types found", async () => {
-      const rule = createUndergroundRule(
+      const rule = createSurfaceRule(
         ["grass"],
         "forbid",
-        "Underground validation rule"
+        "Surface validation rule"
       );
       const object = createTestObject(
         "tree",
@@ -118,10 +115,10 @@ describe("UndergroundValidator", () => {
     });
 
     it("should handle multiple ground tags", async () => {
-      const rule = createUndergroundRule(
+      const rule = createSurfaceRule(
         ["grass", "dirt"],
         "forbid",
-        "Underground validation rule"
+        "Surface validation rule"
       );
       const object = createTestObject(
         "tree",
@@ -145,7 +142,7 @@ describe("UndergroundValidator", () => {
 
       expect(result).toEqual({
         error: {
-          reason: "Underground validation rule",
+          reason: "Surface validation rule",
           type: "atomic",
         },
         highlightedAreas: [groundAreas[0].area],
@@ -153,10 +150,10 @@ describe("UndergroundValidator", () => {
     });
 
     it("should handle partial tag matches", async () => {
-      const rule = createUndergroundRule(
+      const rule = createSurfaceRule(
         ["grass", "dirt"],
         "forbid",
-        "Underground validation rule"
+        "Surface validation rule"
       );
       const object = createTestObject(
         "tree",
@@ -180,7 +177,7 @@ describe("UndergroundValidator", () => {
 
       expect(result).toEqual({
         error: {
-          reason: "Underground validation rule",
+          reason: "Surface validation rule",
           type: "atomic",
         },
         highlightedAreas: [groundAreas[0].area],
@@ -190,11 +187,7 @@ describe("UndergroundValidator", () => {
 
   describe("edge cases", () => {
     it("should handle empty tag list", async () => {
-      const rule = createUndergroundRule(
-        [],
-        "forbid",
-        "Underground validation rule"
-      );
+      const rule = createSurfaceRule([], "forbid", "Surface validation rule");
       const object = createTestObject(
         "tree",
         new Vector3(2, 0, 2)
@@ -206,10 +199,10 @@ describe("UndergroundValidator", () => {
     });
 
     it("should handle ground areas without tags", async () => {
-      const rule = createUndergroundRule(
+      const rule = createSurfaceRule(
         ["grass"],
         "forbid",
-        "Underground validation rule"
+        "Surface validation rule"
       );
       const object = createTestObject(
         "tree",

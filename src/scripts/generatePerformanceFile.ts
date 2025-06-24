@@ -21,7 +21,7 @@ const ruleSet: ConstraintSet = {
 };
 
 const actionEnum = ["allow-only", "forbid"] as const;
-const subjectEnum = ["distanceTo", "underground"] as const;
+const subjectEnum = ["distanceTo", "surface"] as const;
 
 function randomEnum<T extends readonly string[]>(arr: T): T[number] {
   return arr[Math.floor(Math.random() * arr.length)];

@@ -5,7 +5,7 @@ import {
   createTestObject,
   createAreaRule,
   createDistanceRule,
-  createUndergroundRule,
+  createSurfaceRule,
   createCircleArea,
 } from "@/test/utils/testUtils";
 import {
@@ -191,14 +191,14 @@ describe("ValidationOrchestrator", () => {
       const area = createCircleArea([0, 0], 5);
       const areaRule = createAreaRule(area, "forbid");
       const distanceRule = createDistanceRule(["tree"], 5);
-      const undergroundRule = createUndergroundRule(["grass"]);
+      const surfaceRule = createSurfaceRule(["grass"]);
 
       const ruleset: ResolvedRuleset = {
         name: "test",
         tags: ["test"],
         scope: "object",
         transform: [],
-        placement: [areaRule, distanceRule, undergroundRule],
+        placement: [areaRule, distanceRule, surfaceRule],
       };
       mockRuleResolver.setRuleset(object.type, ruleset);
 

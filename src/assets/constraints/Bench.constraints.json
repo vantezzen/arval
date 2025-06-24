@@ -31,7 +31,7 @@
     },
     {
       "action": "forbid",
-      "subject": "underground",
+      "subject": "surface",
       "tags": ["asphalted"],
       "reason": "vollständig auf nicht-asphaltierten Stellen liegen, da es sonst Fahrzeuge oder Fußgänger blockiert"
     },

@@ -23,7 +23,7 @@
     },
     {
       "action": "allow-only",
-      "subject": "underground",
+      "subject": "surface",
       "tags": ["street"],
       "type": "full",
       "reason": "vollständig auf einer Straße platziert werden, um die Sicherheit der Fußgänger zu gewährleisten"

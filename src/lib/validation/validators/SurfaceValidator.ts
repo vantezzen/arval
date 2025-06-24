@@ -9,15 +9,15 @@ import { injectable, inject } from "tsyringe";
 import { TYPES } from "@/lib/di/types";
 import type GroundService from "../GroundService";
 
-const undergroundRuleSchema = z.object({
+const surfaceRuleSchema = z.object({
   ...placementRule.shape,
   tags: z.string().array(),
   type: z.literal("full").optional(),
 });
-type UndergroundRule = z.infer<typeof undergroundRuleSchema>;
+type SurfaceRule = z.infer<typeof surfaceRuleSchema>;
 
 @injectable()
-export default class UndergroundValidator extends Validator<UndergroundRule> {
+export default class SurfaceValidator extends Validator<SurfaceRule> {
   constructor(
     @inject(TYPES.GroundService) private groundService: GroundService
   ) {
@@ -25,18 +25,23 @@ export default class UndergroundValidator extends Validator<UndergroundRule> {
   }
 
   protected validatesRule(rule: ResolvedRule): boolean {
-    return rule.subject === "underground";
+    return rule.subject === "surface";
   }
 
   protected getRuleSchema(): ZodObject {
-    return undergroundRuleSchema;
+    return surfaceRuleSchema;
   }
 
   protected async passes(
-    rule: UndergroundRule,
+    rule: SurfaceRule,
     object: Object
   ): Promise<PassResult> {
     const currentGroundTypes = await this.groundService.getGroundType(object);
+    console.debug(
+      "SurfaceValidator: currentGroundTypes",
+      currentGroundTypes,
+      object.position
+    );
 
     if (rule.type === "full") {
       // If the rule is of type "full", we check if *all* objects match the tags
@@ -59,10 +64,7 @@ export default class UndergroundValidator extends Validator<UndergroundRule> {
     };
   }
 
-  private getHighlightedAreas(
-    groundAreas: GroundArea[],
-    rule: UndergroundRule
-  ) {
+  private getHighlightedAreas(groundAreas: GroundArea[], rule: SurfaceRule) {
     return groundAreas
       .filter((area) => isTagMatched(rule.tags, area.tags))
       .map((area) => area.area)

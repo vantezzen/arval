@@ -131,12 +131,12 @@ export const createDistanceRule = (
   distance,
 });
 
-export const createUndergroundRule = (
+export const createSurfaceRule = (
   tags: string[] = ["grass"],
   action: "allow-only" | "forbid" | "require" = "forbid",
-  reason: string = "Underground validation rule"
+  reason: string = "Surface validation rule"
 ): ResolvedRule => ({
-  subject: "underground",
+  subject: "surface",
   action,
   reason,
   reasonType: "atomic",

@@ -58,6 +58,9 @@ export default class ValidationPerformance {
 
         const min = this.safeMath(data.durations, Math.min);
         const max = this.safeMath(data.durations, Math.max);
+        const confidence = 0.95; // 95% confidence interval
+        const marginOfError = (max - min) * confidence;
+
         return {
           Label: label,
           Calls: data.callCount,
@@ -65,6 +68,7 @@ export default class ValidationPerformance {
           "Avg (ms)": avg,
           "Min (ms)": min,
           "Max (ms)": max,
+          "Margin of Error (ms)": marginOfError.toFixed(2),
         };
       }
     );
