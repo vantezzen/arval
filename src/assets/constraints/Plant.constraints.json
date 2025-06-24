@@ -1,0 +1,25 @@
+{
+  "$schema": "https://arval.vantezzen.io/schemas/acs.schema.json",
+  "version": 1,
+
+  "name": "Die Pflanze",
+  "scope": "object",
+  "tags": ["plant", "vegetation", "green", "tall", "nature"],
+
+  "transform": [
+    {
+      "action": "allow-only",
+      "subject": "rotation",
+      "axes": ["y"]
+    }
+  ],
+
+  "placement": [
+    {
+      "action": "allow-only",
+      "subject": "intersection",
+      "tags": ["plantbed"],
+      "reason": "in einem Pflanzbeet platziert werden, um die Sicherheit der Fußgänger zu gewährleisten"
+    }
+  ]
+}

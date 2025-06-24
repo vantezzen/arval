@@ -10,17 +10,16 @@ const OBJECTS = {
     id: "zebraCrossing",
     model: "/models/zebra-crossing.gltf",
   },
-  plantBucket: {
+  bucket: {
     name: "Blumentopf",
-    id: "plantBucket",
+    id: "bucket",
     model:
       "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/wood-bucket/model.gltf",
   },
-  tree: {
-    name: "Baum",
-    id: "tree",
-    model:
-      "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/tree-beech/model.gltf",
+  plant: {
+    name: "Pflanze",
+    id: "plant",
+    model: "/models/plant.gltf",
   },
 } as const;
 
