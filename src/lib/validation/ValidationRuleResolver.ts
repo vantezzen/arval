@@ -1,15 +1,19 @@
 import { GlobalRulesets, ObjectRulesets } from "../config/rulesets";
+import { TYPES } from "../di/types";
 import type { ResolvedRuleset } from "../types/rules";
 import type { ConstraintSet } from "../types/schemas/acs.schema";
 import { mergeUnique } from "../utils";
+import type TagService from "./TagService";
 import { isTagMatched } from "./utils";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 
 /**
  * ValidationRuleResolver: Resolve all rules that belong to an object (local and global)
  */
 @injectable()
 export default class ValidationRuleResolver {
+  constructor(@inject(TYPES.TagService) private tagService: TagService) {}
+
   /**
    * Resolve all rule and object definitions for an object
    *
@@ -20,6 +24,8 @@ export default class ValidationRuleResolver {
     const directRulesets = this.resolveDirectRulesetsForObject(
       objectType
     ) as ResolvedRuleset;
+    this.tagService.setObjectTags(objectType, directRulesets.tags as string[]);
+
     const globalRules = this.resolveGlobalRulesForTags(directRulesets.tags);
     directRulesets.placement = [...directRulesets.placement, ...globalRules];
     return directRulesets;

@@ -12,6 +12,8 @@ import ValidationExecutor from "../validation/ValidationExecutor";
 import ValidationReporter from "../validation/ValidationReporter";
 import InteractionService from "../interaction/InteractionService";
 import ValidationPerformance from "../validation/ValidationPerformance";
+import TagService from "../validation/TagService";
+import IntersectionService from "../validation/IntersectionService";
 
 export function configureContainer() {
   container.register(TYPES.SegmentationService, {
@@ -35,6 +37,20 @@ export function configureContainer() {
       lifecycle: Lifecycle.Singleton,
     }
   );
+
+  container.register(
+    TYPES.TagService,
+    {
+      useClass: TagService,
+    },
+    {
+      lifecycle: Lifecycle.Singleton,
+    }
+  );
+
+  container.register(TYPES.IntersectionService, {
+    useClass: IntersectionService,
+  });
 
   container.register(TYPES.ValidationRuleResolver, {
     useClass: ValidationRuleResolver,

@@ -11,4 +11,6 @@ export const TYPES = {
   ValidationPerformance: "ValidationPerformance",
   ErrorMessageService: "ErrorMessageService",
   TransformationValidator: "TransformationValidator",
+  TagService: "TagService",
+  IntersectionService: "IntersectionService",
 } as const;

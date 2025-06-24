@@ -4,7 +4,7 @@
 
   "name": "Die Sitzbank",
   "scope": "object",
-  "tags": ["bench", "furniture", "seat"],
+  "tags": ["bench", "furniture", "seat", "tall"],
 
   "transform": [
     {
@@ -34,6 +34,12 @@
       "subject": "underground",
       "tags": ["asphalted"],
       "reason": "vollständig auf nicht-asphaltierten Stellen liegen, da es sonst Fahrzeuge oder Fußgänger blockiert"
+    },
+    {
+      "action": "forbid",
+      "subject": "intersection",
+      "tags": ["tall"],
+      "reason": "ausreichend Abstand zu anderen Objekten haben"
     }
   ]
 }
