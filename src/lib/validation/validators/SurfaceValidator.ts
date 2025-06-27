@@ -37,11 +37,6 @@ export default class SurfaceValidator extends Validator<SurfaceRule> {
     object: Object
   ): Promise<PassResult> {
     const currentGroundTypes = await this.groundService.getGroundType(object);
-    console.debug(
-      "SurfaceValidator: currentGroundTypes",
-      currentGroundTypes,
-      object.position
-    );
 
     if (rule.type === "full") {
       // If the rule is of type "full", we check if *all* objects match the tags

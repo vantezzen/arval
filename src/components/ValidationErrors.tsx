@@ -1,8 +1,9 @@
 import type Object from "@/lib/dto/Object";
-import { Html } from "@react-three/drei";
-import { Vector3 } from "three";
+import { Camera } from "three";
 import { ChatBubble } from "./ui/chat-bubble";
 import { useMemo } from "react";
+import { Portal } from "./Portal";
+import { useThree } from "@react-three/fiber";
 
 function ErrorMessage({ text }: { text: string }) {
   // This is not safe against XSS but we assume error messages are safe as they are created by our city planners
@@ -22,6 +23,19 @@ function ErrorMessage({ text }: { text: string }) {
   );
 }
 
+function getObjectPositionOnScreen(
+  object: Object,
+  camera: Camera,
+  size: { width: number; height: number }
+) {
+  const pos = object.position.clone();
+  pos.project(camera);
+  // Convert NDC [-1,1] to screen coordinates
+  const left = ((pos.x + 1) / 2) * size.width;
+  const top = ((-pos.y + 1) / 2) * size.height;
+  return { top, left };
+}
+
 function ValidationErrors({
   errors,
   object,
@@ -29,22 +43,32 @@ function ValidationErrors({
   errors: string[];
   object: Object;
 }) {
+  const { camera, size } = useThree();
   if (!errors.length) return null;
 
+  const { top, left } = getObjectPositionOnScreen(object, camera, size);
+
   return (
-    <Html
-      sprite
-      position={object.position.clone().add(new Vector3(0, -0.1, 0))}
-    >
-      <ChatBubble
-        className="w-lg -translate-x-1/2 grid gap-2 pointer-events-none"
-        arrow="top-center"
+    <Portal>
+      <div
+        className="absolute"
+        style={{
+          top: `${top}px`,
+          left: `${left}px`,
+          transform: "translate(-50%, 20px)",
+          pointerEvents: "none",
+        }}
       >
-        {errors.map((error) => (
-          <ErrorMessage text={error} key={error} />
-        ))}
-      </ChatBubble>
-    </Html>
+        <ChatBubble
+          className="w-lg grid gap-2 pointer-events-none"
+          arrow="top-center"
+        >
+          {errors.map((error) => (
+            <ErrorMessage text={error} key={error} />
+          ))}
+        </ChatBubble>
+      </div>
+    </Portal>
   );
 }
 

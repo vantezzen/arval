@@ -3,13 +3,12 @@ import InteractionConnector from "@/lib/interaction/InteractionConnector";
 import { store } from "@/lib/xr";
 import { Canvas, useThree } from "@react-three/fiber";
 import {
-  Environment,
   GizmoHelper,
   GizmoViewport,
   KeyboardControls,
   type KeyboardControlsEntry,
 } from "@react-three/drei";
-import { XR } from "@react-three/xr";
+import { XR, XRDomOverlay } from "@react-three/xr";
 import { useEffect, useMemo, useState } from "react";
 import { Controls } from "@/lib/types/interface";
 import KeyboardInteractionConnector from "@/lib/interaction/KeyboardInteractionConnector";
@@ -23,6 +22,7 @@ import { IS_AR_ENABLED } from "@/lib/config/static";
 import AddObjectModal from "./addModal/AddObjectModal";
 import { useThreeStore } from "@/lib/stores/threeStore";
 import CreativityLevel from "./CreativityLevel";
+import { Portal, PortalContent } from "./Portal";
 
 function AppCanvasContent() {
   const [interaction] = useState(() =>
@@ -86,17 +86,25 @@ function AppCanvas() {
               info: "ms",
             }}
           />
-
           {IS_AR_ENABLED ? (
             <XR store={store}>
               <AppCanvasContent />
+
+              <XRDomOverlay
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <PortalContent />
+              </XRDomOverlay>
             </XR>
           ) : (
             <>
               <AppCanvasContent />
-
-              <fog attach="fog" args={["white", 60, 100]} />
-              <Environment preset="city" />
             </>
           )}
         </Canvas>
@@ -108,7 +116,15 @@ function AppCanvas() {
         </div>
       )}
 
-      <AddObjectModal />
+      {!IS_AR_ENABLED && (
+        <div className="fixed bottom-0 left-0 w-screen h-screen pointer-events-none">
+          <PortalContent />
+        </div>
+      )}
+
+      <Portal>
+        <AddObjectModal />
+      </Portal>
       <CreativityLevel />
     </KeyboardControls>
   );

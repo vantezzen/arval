@@ -68,7 +68,7 @@ export default class ValidationPerformance {
           "Avg (ms)": avg,
           "Min (ms)": min,
           "Max (ms)": max,
-          "Margin of Error (ms)": marginOfError.toFixed(2),
+          "Margin of Error (ms)": marginOfError,
         };
       }
     );
