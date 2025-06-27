@@ -61,7 +61,7 @@ describe("SizeService", () => {
 
       let loadCallback: ((gltf: any) => void) | undefined;
       mockGLTFLoader.load.mockImplementation(
-        (url: string, onLoad: (gltf: any) => void) => {
+        (_url: string, onLoad: (gltf: any) => void) => {
           loadCallback = onLoad;
         }
       );
@@ -98,9 +98,9 @@ describe("SizeService", () => {
       let errorCallback: ((error: Error) => void) | undefined;
       mockGLTFLoader.load.mockImplementation(
         (
-          url: string,
-          onLoad: any,
-          onProgress: any,
+          _url: string,
+          _onLoad: any,
+          _onProgress: any,
           onError: (error: Error) => void
         ) => {
           errorCallback = onError;
@@ -122,7 +122,7 @@ describe("SizeService", () => {
 
       let loadCallback: ((gltf: any) => void) | undefined;
       mockGLTFLoader.load.mockImplementation(
-        (url: string, onLoad: (gltf: any) => void) => {
+        (_url: string, onLoad: (gltf: any) => void) => {
           loadCallback = onLoad;
         }
       );
