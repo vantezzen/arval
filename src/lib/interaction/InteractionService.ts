@@ -3,6 +3,7 @@ import { useObjectStore } from "../stores/objectStore";
 import { inject, injectable } from "tsyringe";
 import { TYPES } from "../di/types";
 import type TransformationValidator from "../validation/validators/TransformationValidator";
+import { clamp } from "../utils";
 
 /**
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/ModelessTouch/ModelessTouchInteraction.ts
@@ -196,12 +197,21 @@ export default class InteractionService {
       return;
     }
 
+    const allowedScale = this.transformationValidator.getAllowedRotationScale(
+      state.editingObject
+    );
+
     const scale = state.editingObject.scale;
     const newScale = new Vector3(
       scale.x + distanceDelta * 0.01,
       scale.y + distanceDelta * 0.01,
       scale.z + distanceDelta * 0.01
     );
+
+    // Clamp the scale to the allowed range
+    newScale.x = clamp(newScale.x, allowedScale[0], allowedScale[1]);
+    newScale.y = clamp(newScale.y, allowedScale[0], allowedScale[1]);
+    newScale.z = clamp(newScale.z, allowedScale[0], allowedScale[1]);
 
     state.editingObject.scale = newScale;
   }

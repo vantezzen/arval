@@ -11,6 +11,11 @@
       "action": "allow-only",
       "subject": "rotation",
       "axes": ["y"]
+    },
+    {
+      "action": "allow-only",
+      "subject": "scale",
+      "between": [0.5, 2]
     }
   ],
 
