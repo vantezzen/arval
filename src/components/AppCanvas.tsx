@@ -111,20 +111,26 @@ function AppCanvas() {
       </div>
 
       {IS_AR_ENABLED && (
-        <div className="fixed bottom-0 left-0 w-screen p-3 bg-zinc-900/10">
-          <button onClick={() => store.enterAR()}>Enter AR</button>
-        </div>
+        <>
+          <div className="fixed bottom-0 left-0 w-screen p-3 bg-zinc-900/10">
+            <button onClick={() => store.enterAR()}>Enter AR</button>
+          </div>
+
+          <Portal>
+            <AddObjectModal />
+          </Portal>
+        </>
       )}
 
       {!IS_AR_ENABLED && (
-        <div className="fixed bottom-0 left-0 w-screen h-screen pointer-events-none">
-          <PortalContent />
-        </div>
-      )}
+        <>
+          <div className="fixed top-0 left-0 w-screen h-screen pointer-events-none">
+            <PortalContent />
+          </div>
 
-      <Portal>
-        <AddObjectModal />
-      </Portal>
+          <AddObjectModal />
+        </>
+      )}
       <CreativityLevel />
     </KeyboardControls>
   );

@@ -15,6 +15,10 @@ import { Euler, Quaternion, Vector3 } from "three";
 import { useState } from "react";
 import { useThreeStore } from "@/lib/stores/threeStore";
 
+function NoPortal({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
+
 function AddObjectModal() {
   const objectStore = useObjectStore();
   const three = useThreeStore((state) => state.three);
@@ -28,7 +32,7 @@ function AddObjectModal() {
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent>
+      <DrawerContent portalComponent={NoPortal}>
         <DrawerHeader>
           <DrawerTitle>Objekt hinzufügen</DrawerTitle>
         </DrawerHeader>
