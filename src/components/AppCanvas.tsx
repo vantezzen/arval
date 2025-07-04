@@ -68,7 +68,12 @@ function AppCanvas() {
   return (
     <KeyboardControls map={keyboardMap}>
       <div className="h-screen w-screen">
-        <Canvas>
+        <Canvas
+          camera={{
+            rotation: [0, -Math.PI / 2, 0],
+            position: [0, 1.6, 0],
+          }}
+        >
           <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
             <GizmoViewport
               axisColors={["red", "green", "blue"]}
