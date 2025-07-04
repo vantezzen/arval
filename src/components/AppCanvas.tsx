@@ -85,16 +85,18 @@ function AppCanvas() {
             />
             {/* alternative: <GizmoViewcube /> */}
           </GizmoHelper>
-          <Perf
-            customData={{
-              value: 0,
-              // @ts-expect-error Types are wrong
-              name: "Validation",
-              round: 2,
-              // @ts-expect-error Types are wrong
-              info: "ms",
-            }}
-          />
+          {!IS_AR_ENABLED && (
+            <Perf
+              customData={{
+                value: 0,
+                // @ts-expect-error Types are wrong
+                name: "Validation",
+                round: 2,
+                // @ts-expect-error Types are wrong
+                info: "ms",
+              }}
+            />
+          )}
           {IS_AR_ENABLED ? (
             <XR store={store}>
               <AppCanvasContent />
