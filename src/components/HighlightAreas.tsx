@@ -5,7 +5,7 @@ import { useIsClickDown } from "@/lib/hooks/useIsClickDown";
 import { IS_AR_ENABLED } from "@/lib/config/static";
 
 const HIGHLIGHT_COLOR = "#ff0000";
-const HIGHLIGHT_OPACITY = IS_AR_ENABLED ? 0.4 : 0.1;
+const HIGHLIGHT_OPACITY = IS_AR_ENABLED ? 0.25 : 0.1;
 const HEIGHT = 0.01;
 
 const PolygonMesh = ({ area }: { area: Area & { type: "polygon" } }) => {
