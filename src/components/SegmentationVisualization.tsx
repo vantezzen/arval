@@ -89,9 +89,6 @@ export const SegmentationVisualization = ({
 }) => {
   return (
     <>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[50, 100, 50]} intensity={0.8} castShadow />
-
       <gridHelper args={[200, 20, "#888888", "#444444"]} />
 
       <group name="StreetLayout">

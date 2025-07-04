@@ -38,11 +38,14 @@ function AppCanvasContent() {
 
   return (
     <>
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[50, 100, 50]} intensity={0.8} castShadow />
+
       {objects.map((object) => (
         <CanvasObject object={object} key={object.id} />
       ))}
 
-      <SegmentationVisualization />
+      {!IS_AR_ENABLED && <SegmentationVisualization />}
 
       <InteractionConnector interaction={interaction} />
       <KeyboardInteractionConnector />
