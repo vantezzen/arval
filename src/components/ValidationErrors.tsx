@@ -1,9 +1,9 @@
 import type Object from "@/lib/dto/Object";
 import { Camera } from "three";
 import { ChatBubble } from "./ui/chat-bubble";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Portal } from "./Portal";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 
 function ErrorMessage({ text }: { text: string }) {
   // This is not safe against XSS but we assume error messages are safe as they are created by our city planners
@@ -44,6 +44,17 @@ function ValidationErrors({
   object: Object;
 }) {
   const { camera, size } = useThree();
+  const bubbleRef = useRef<HTMLDivElement>(null);
+
+  useFrame(() => {
+    // Doing this using the direct ref allows us to update the position without re-rendering the component
+    const { top, left } = getObjectPositionOnScreen(object, camera, size);
+    if (bubbleRef.current && errors.length) {
+      bubbleRef.current.style.top = `${top}px`;
+      bubbleRef.current.style.left = `${left}px`;
+    }
+  });
+
   if (!errors.length) return null;
 
   const { top, left } = getObjectPositionOnScreen(object, camera, size);
@@ -58,6 +69,7 @@ function ValidationErrors({
           transform: "translate(-50%, 20px)",
           pointerEvents: "none",
         }}
+        ref={bubbleRef}
       >
         <ChatBubble
           className="w-lg grid gap-2 pointer-events-none"

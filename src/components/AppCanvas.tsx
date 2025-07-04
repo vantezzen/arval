@@ -64,6 +64,7 @@ function AppCanvas() {
     ],
     []
   );
+  const [isInAr, setIsInAr] = useState(false);
 
   return (
     <KeyboardControls map={keyboardMap}>
@@ -115,26 +116,35 @@ function AppCanvas() {
         </Canvas>
       </div>
 
-      {IS_AR_ENABLED && (
+      {IS_AR_ENABLED ? (
         <>
           <div className="fixed bottom-0 left-0 w-screen p-3 bg-zinc-900/10">
-            <button onClick={() => store.enterAR()}>Enter AR</button>
+            <button
+              onClick={() => {
+                store.enterAR();
+                setIsInAr(true);
+              }}
+            >
+              Enter AR
+            </button>
           </div>
 
           <Portal>
             <AddObjectModal />
           </Portal>
         </>
+      ) : (
+        <div className="fixed top-0 left-0 w-screen h-screen pointer-events-none">
+          <PortalContent />
+        </div>
       )}
 
-      {!IS_AR_ENABLED && (
-        <>
-          <div className="fixed top-0 left-0 w-screen h-screen pointer-events-none">
-            <PortalContent />
-          </div>
-
+      {isInAr ? (
+        <Portal>
           <AddObjectModal />
-        </>
+        </Portal>
+      ) : (
+        <AddObjectModal />
       )}
       <CreativityLevel />
     </KeyboardControls>
