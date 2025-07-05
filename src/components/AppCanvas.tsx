@@ -45,8 +45,7 @@ function AppCanvasContent() {
         <CanvasObject object={object} key={object.id} />
       ))}
 
-      {!IS_AR_ENABLED && <SegmentationVisualization />}
-
+      <SegmentationVisualization />
       <InteractionConnector interaction={interaction} />
       <KeyboardInteractionConnector />
     </>
