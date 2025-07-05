@@ -18,6 +18,7 @@ import {
   OverlayEffect,
 } from "@vantezzen/effectable-gltf";
 import { useCreativityStore } from "@/lib/stores/creativityLevelStore";
+import { IS_AR_ENABLED } from "@/lib/config/static";
 
 function CanvasObject({ object }: { object: Object }) {
   const update = useUpdate();
@@ -68,7 +69,7 @@ function CanvasObject({ object }: { object: Object }) {
           }
         }}
       >
-        {isEditing && <OutlineEffect color="white" />}
+        {isEditing && !IS_AR_ENABLED && <OutlineEffect color="white" />}
         {validationResult.errors.length > 0 &&
           isEditing &&
           creativityLevel < 1 && <OverlayEffect color="red" opacity={0.3} />}
