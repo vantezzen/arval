@@ -27,7 +27,7 @@ interface ObjectState {
 }
 
 export const useObjectStore = create<ObjectState>((set) => ({
-  objects: EXAMPLE_OBJECTS,
+  objects: [],
   editingObject: null,
 
   addObject: (object: Object) =>
