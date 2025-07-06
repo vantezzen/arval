@@ -49,10 +49,10 @@ export default class TransformationValidator {
 
     const ruleset = this.ruleResolver.resolveRulesetForObject(object.type);
     for (const rule of ruleset.transform) {
-      if (rule.subject === "rotation") {
+      if (rule.subject === "scale") {
         const isRestrictive = rule.action === "allow-only";
         if (isRestrictive) {
-          return [rule.min ?? 0.1, rule.max ?? 10];
+          return rule.between!;
         }
 
         if (rule.min !== undefined && rule.max !== undefined) {

@@ -5,12 +5,32 @@ import { TYPES } from "../di/types";
 import type TransformationValidator from "../validation/validators/TransformationValidator";
 import { clamp } from "../utils";
 
+interface VirtualTouchPoint {
+  clientX: number;
+  clientY: number;
+  identifier: number;
+}
+
+interface VirtualTouchEvent {
+  touches: VirtualTouchPoint[];
+  targetTouches: VirtualTouchPoint[];
+  changedTouches: VirtualTouchPoint[];
+}
+
+type TouchEventOrVirtual = TouchEvent | VirtualTouchEvent;
+
+interface UnifiedTouch {
+  clientX: number;
+  clientY: number;
+  identifier: number;
+}
+
 /**
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/ModelessTouch/ModelessTouchInteraction.ts
  */
 @injectable()
 export default class InteractionService {
-  private currentTouchPoints: Touch[] = [];
+  private currentTouchPoints: UnifiedTouch[] = [];
 
   private cameraPosition = new Vector3();
   private cameraRotation = new Euler();
@@ -26,7 +46,7 @@ export default class InteractionService {
   private prevCenterPoint: Vector3 | null = null;
   private mouseDown = false;
 
-  private eventQueue: Touch[] = [];
+  private eventQueue: UnifiedTouch[] = [];
   private readonly eventQueueSize = 1;
 
   private deviceOrientation: number = 0;
@@ -52,7 +72,10 @@ export default class InteractionService {
     this.deviceOrientation = orientation;
   }
 
-  private transformTouchCoordinates(touch: Touch): { x: number; y: number } {
+  private transformTouchCoordinates(touch: UnifiedTouch): {
+    x: number;
+    y: number;
+  } {
     if (this.deviceOrientation === 0) {
       return { x: touch.clientX, y: touch.clientY };
     }
@@ -135,11 +158,10 @@ export default class InteractionService {
       .add(cameraRight.clone().multiplyScalar(distRight));
   }
 
-  onTouchStart(event: TouchEvent) {
-    this.currentTouchPoints = Array.from(event.touches);
-    this.eventQueue = [];
+  onTouchStart(event: TouchEventOrVirtual) {
+    this.currentTouchPoints = this.convertToUnifiedTouches(event.touches);
 
-    const firstTouch = event.touches[0];
+    const firstTouch = this.currentTouchPoints[0];
     if (firstTouch) {
       this.prevTouchX = firstTouch.clientX;
       this.prevTouchY = firstTouch.clientY;
@@ -152,8 +174,8 @@ export default class InteractionService {
       }
     }
   }
-  onTouchMove(event: TouchEvent) {
-    const nextTouchPoints = Array.from(event.touches);
+  onTouchMove(event: TouchEventOrVirtual) {
+    const nextTouchPoints = this.convertToUnifiedTouches(event.touches);
 
     if (nextTouchPoints.length === 1) {
       this.eventQueue.push(nextTouchPoints[0]);
@@ -165,14 +187,14 @@ export default class InteractionService {
     this.handleUpdate(nextTouchPoints);
     this.currentTouchPoints = nextTouchPoints;
 
-    const firstTouch = event.touches[0];
+    const firstTouch = nextTouchPoints[0];
     if (firstTouch) {
       this.prevTouchX = firstTouch.clientX;
       this.prevTouchY = firstTouch.clientY;
     }
   }
-  onTouchEnd(event: TouchEvent) {
-    const nextTouchPoints = Array.from(event.touches);
+  onTouchEnd(event: TouchEventOrVirtual) {
+    const nextTouchPoints = this.convertToUnifiedTouches(event.touches);
     this.handleUpdate(nextTouchPoints);
     this.currentTouchPoints = nextTouchPoints;
     this.eventQueue = [];
@@ -188,10 +210,23 @@ export default class InteractionService {
     this.prevCenterPoint = null;
   }
 
+  private convertToUnifiedTouches(
+    touches: TouchList | VirtualTouchPoint[]
+  ): UnifiedTouch[] {
+    return Array.from(touches).map((touch, index) => ({
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      identifier: "identifier" in touch ? touch.identifier : index,
+    }));
+  }
+
   /** Makes a mouse event look like a single‐finger `Touch` for reuse. */
-  private static asSyntheticTouch(evt: MouseEvent): Touch {
+  private static asSyntheticTouch(evt: MouseEvent): UnifiedTouch {
     // Only the `clientX`/`clientY` properties are used in the math below
-    return { clientX: evt.clientX, clientY: evt.clientY } as unknown as Touch;
+    return {
+      clientX: evt.clientX,
+      clientY: evt.clientY,
+    } as unknown as UnifiedTouch;
   }
 
   onClickStart(event: MouseEvent) {
@@ -232,13 +267,13 @@ export default class InteractionService {
     this.prevCenterPoint = null;
   }
 
-  private handleUpdate(nextTouchPoints?: Touch[]) {
+  private handleUpdate(nextTouchPoints?: UnifiedTouch[]) {
     this.updateMove(nextTouchPoints);
     this.updateScale(nextTouchPoints);
     this.updateRotate(nextTouchPoints);
   }
 
-  updateMove(nextTouchPoints?: Touch[]) {
+  updateMove(nextTouchPoints?: UnifiedTouch[]) {
     const touchPoints = nextTouchPoints || this.currentTouchPoints;
     if (touchPoints.length !== 1) return;
 
@@ -262,7 +297,7 @@ export default class InteractionService {
     const transformedPrevTouch = this.transformTouchCoordinates({
       clientX: this.prevTouchX,
       clientY: this.prevTouchY,
-    } as Touch);
+    } as UnifiedTouch);
 
     const deltaX = transformedTouch.x - transformedPrevTouch.x;
     const deltaY = transformedTouch.y - transformedPrevTouch.y;
@@ -283,7 +318,7 @@ export default class InteractionService {
     state.editingObject.position = newWorldPosition;
   }
 
-  updateScale(nextTouchPoints?: Touch[]) {
+  updateScale(nextTouchPoints?: UnifiedTouch[]) {
     const touchPoints = nextTouchPoints || this.currentTouchPoints;
     const prevDistance = this.prevDistance;
     if (touchPoints.length !== 2) return;
@@ -327,7 +362,7 @@ export default class InteractionService {
     state.editingObject.scale = newScale;
   }
 
-  updateRotate(nextTouchPoints?: Touch[]) {
+  updateRotate(nextTouchPoints?: UnifiedTouch[]) {
     const touchPoints = nextTouchPoints || this.currentTouchPoints;
     if (touchPoints.length !== 2) return;
 
