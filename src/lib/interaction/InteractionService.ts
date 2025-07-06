@@ -14,6 +14,8 @@ export default class InteractionService {
 
   private cameraPosition = new Vector3();
   private cameraRotation = new Euler();
+  private prevCameraPosition = new Vector3();
+  private prevCameraRotation = new Euler();
 
   private prevTouchX: number | null = null;
   private prevTouchY: number | null = null;
@@ -24,29 +26,142 @@ export default class InteractionService {
   private prevCenterPoint: Vector3 | null = null;
   private mouseDown = false;
 
+  private eventQueue: Touch[] = [];
+  private readonly eventQueueSize = 1;
+
+  private deviceOrientation: number = 0;
+
+  private objectScreenPosition: { x: number; y: number } | null = null;
+
   constructor(
     @inject(TYPES.TransformationValidator)
     private transformationValidator: TransformationValidator
   ) {}
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
+    this.prevCameraPosition.copy(this.cameraPosition);
+    this.prevCameraRotation.copy(this.cameraRotation);
+
     this.cameraPosition.copy(cameraPosition);
     this.cameraRotation.copy(cameraRotation);
 
     this.handleUpdate();
   }
 
+  onDeviceOrientationChange(orientation: number) {
+    this.deviceOrientation = orientation;
+  }
+
+  private transformTouchCoordinates(touch: Touch): { x: number; y: number } {
+    if (this.deviceOrientation === 0) {
+      return { x: touch.clientX, y: touch.clientY };
+    }
+
+    const radians = (-this.deviceOrientation * Math.PI) / 180;
+    const cos = Math.cos(radians);
+    const sin = Math.sin(radians);
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const relativeX = touch.clientX - centerX;
+    const relativeY = touch.clientY - centerY;
+
+    const rotatedX = relativeX * cos - relativeY * sin;
+    const rotatedY = relativeX * sin + relativeY * cos;
+
+    return {
+      x: rotatedX + centerX,
+      y: rotatedY + centerY,
+    };
+  }
+
+  private worldToScreen(worldPosition: Vector3): { x: number; y: number } {
+    const cameraQuat = new Quaternion().setFromEuler(this.cameraRotation);
+    const cameraForward = new Vector3(0, 0, -1).applyQuaternion(cameraQuat);
+    cameraForward.y = 0;
+    cameraForward.normalize();
+
+    const worldUp = new Vector3(0, 1, 0);
+    const cameraRight = new Vector3().crossVectors(cameraForward, worldUp);
+    cameraRight.normalize();
+
+    const cameraFlatPos = new Vector3(
+      this.cameraPosition.x,
+      worldPosition.y,
+      this.cameraPosition.z
+    );
+
+    const offset = new Vector3().subVectors(worldPosition, cameraFlatPos);
+    const distForward = offset.dot(cameraForward);
+    const distRight = offset.dot(cameraRight);
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const scale = 100;
+
+    return {
+      x: centerX + distRight * scale,
+      y: centerY - distForward * scale,
+    };
+  }
+
+  private screenToWorld(screenPosition: { x: number; y: number }): Vector3 {
+    const cameraQuat = new Quaternion().setFromEuler(this.cameraRotation);
+    const cameraForward = new Vector3(0, 0, -1).applyQuaternion(cameraQuat);
+    cameraForward.y = 0;
+    cameraForward.normalize();
+
+    const worldUp = new Vector3(0, 1, 0);
+    const cameraRight = new Vector3().crossVectors(cameraForward, worldUp);
+    cameraRight.normalize();
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const scale = 100;
+
+    const distRight = (screenPosition.x - centerX) / scale;
+    const distForward = -(screenPosition.y - centerY) / scale;
+
+    const cameraFlatPos = new Vector3(
+      this.cameraPosition.x,
+      0,
+      this.cameraPosition.z
+    );
+
+    return cameraFlatPos
+      .clone()
+      .add(cameraForward.clone().multiplyScalar(distForward))
+      .add(cameraRight.clone().multiplyScalar(distRight));
+  }
+
   onTouchStart(event: TouchEvent) {
     this.currentTouchPoints = Array.from(event.touches);
+    this.eventQueue = [];
 
     const firstTouch = event.touches[0];
     if (firstTouch) {
       this.prevTouchX = firstTouch.clientX;
       this.prevTouchY = firstTouch.clientY;
+
+      const state = useObjectStore.getState();
+      if (state.editingObject) {
+        this.objectScreenPosition = this.worldToScreen(
+          state.editingObject.position
+        );
+      }
     }
   }
   onTouchMove(event: TouchEvent) {
     const nextTouchPoints = Array.from(event.touches);
+
+    if (nextTouchPoints.length === 1) {
+      this.eventQueue.push(nextTouchPoints[0]);
+      if (this.eventQueue.length > this.eventQueueSize) {
+        this.eventQueue.shift();
+      }
+    }
+
     this.handleUpdate(nextTouchPoints);
     this.currentTouchPoints = nextTouchPoints;
 
@@ -60,11 +175,13 @@ export default class InteractionService {
     const nextTouchPoints = Array.from(event.touches);
     this.handleUpdate(nextTouchPoints);
     this.currentTouchPoints = nextTouchPoints;
+    this.eventQueue = [];
 
     if (this.currentTouchPoints.length === 0) {
       this.prevTouchX = null;
       this.prevTouchY = null;
       this.currentTouchPoints = [];
+      this.objectScreenPosition = null;
     }
     this.prevDistance = null;
     this.prevAngle = null;
@@ -128,50 +245,42 @@ export default class InteractionService {
     const currentTouch = touchPoints[0];
     if (this.prevTouchX === null || this.prevTouchY === null) return;
 
-    const deltaX = currentTouch.clientX - this.prevTouchX;
-    const deltaY = currentTouch.clientY - this.prevTouchY;
+    if (
+      this.eventQueue.length > 0 &&
+      this.eventQueue.length < this.eventQueueSize
+    ) {
+      return;
+    }
+
     const state = useObjectStore.getState();
     if (!state.editingObject) {
       console.warn("Tried moving object but no object selected");
       return;
     }
-    const objectPosition = state.editingObject.position.clone();
-    const cameraQuat = new Quaternion().setFromEuler(this.cameraRotation);
 
-    // Take the camera's local -Z as "forward", apply that quaternion to world space.
-    const cameraForward = new Vector3(0, 0, -1).applyQuaternion(cameraQuat);
+    const transformedTouch = this.transformTouchCoordinates(currentTouch);
+    const transformedPrevTouch = this.transformTouchCoordinates({
+      clientX: this.prevTouchX,
+      clientY: this.prevTouchY,
+    } as Touch);
 
-    // Flatten out any pitch/roll so we only move horizontally:
-    cameraForward.y = 0;
-    cameraForward.normalize();
+    const deltaX = transformedTouch.x - transformedPrevTouch.x;
+    const deltaY = transformedTouch.y - transformedPrevTouch.y;
 
-    // compute the camera's horizontal "right" by doing forward x worldUp
-    // (in a standard right-handed system, forward cross up = +right).
-    const worldUp = new Vector3(0, 1, 0);
-    const cameraRight = new Vector3().crossVectors(cameraForward, worldUp);
-    cameraRight.normalize();
+    if (this.objectScreenPosition) {
+      this.objectScreenPosition.x += deltaX;
+      this.objectScreenPosition.y += deltaY;
+    } else {
+      this.objectScreenPosition = this.worldToScreen(
+        state.editingObject.position
+      );
+      this.objectScreenPosition.x += deltaX;
+      this.objectScreenPosition.y += deltaY;
+    }
 
-    // anchor the cameras Y to the objects Y so we do not accidentally move the object up or down.
-    const cameraFlatPos = new Vector3(
-      this.cameraPosition.x,
-      objectPosition.y,
-      this.cameraPosition.z
-    );
-
-    const offset = new Vector3().subVectors(objectPosition, cameraFlatPos);
-    const distForward = offset.dot(cameraForward);
-    const distRight = offset.dot(cameraRight);
-
-    const moveScale = 0.01;
-    const newDistForward = distForward - deltaY * moveScale;
-    const newDistRight = distRight + deltaX * moveScale;
-
-    const newPos = cameraFlatPos
-      .clone()
-      .add(cameraForward.clone().multiplyScalar(newDistForward))
-      .add(cameraRight.clone().multiplyScalar(newDistRight));
-
-    state.editingObject.position = newPos;
+    const newWorldPosition = this.screenToWorld(this.objectScreenPosition);
+    newWorldPosition.y = state.editingObject.position.y;
+    state.editingObject.position = newWorldPosition;
   }
 
   updateScale(nextTouchPoints?: Touch[]) {
@@ -179,11 +288,14 @@ export default class InteractionService {
     const prevDistance = this.prevDistance;
     if (touchPoints.length !== 2) return;
 
-    // Calculate the distance between the two touch points
     const touch1 = touchPoints[0];
     const touch2 = touchPoints[1];
-    const dx = touch1.clientX - touch2.clientX;
-    const dy = touch1.clientY - touch2.clientY;
+
+    const transformedTouch1 = this.transformTouchCoordinates(touch1);
+    const transformedTouch2 = this.transformTouchCoordinates(touch2);
+
+    const dx = transformedTouch1.x - transformedTouch2.x;
+    const dy = transformedTouch1.y - transformedTouch2.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     this.prevDistance = distance;
 
@@ -208,7 +320,6 @@ export default class InteractionService {
       scale.z + distanceDelta * 0.01
     );
 
-    // Clamp the scale to the allowed range
     newScale.x = clamp(newScale.x, allowedScale[0], allowedScale[1]);
     newScale.y = clamp(newScale.y, allowedScale[0], allowedScale[1]);
     newScale.z = clamp(newScale.z, allowedScale[0], allowedScale[1]);
@@ -225,10 +336,12 @@ export default class InteractionService {
     const touch1 = touchPoints[0];
     const touch2 = touchPoints[1];
 
-    // Angle: Y Rotation
+    const transformedTouch1 = this.transformTouchCoordinates(touch1);
+    const transformedTouch2 = this.transformTouchCoordinates(touch2);
+
     const angle = Math.atan2(
-      touch2.clientY - touch1.clientY,
-      touch2.clientX - touch1.clientX
+      transformedTouch2.y - transformedTouch1.y,
+      transformedTouch2.x - transformedTouch1.x
     );
     const prevAngle = this.prevAngle;
     this.prevAngle = angle;
@@ -246,13 +359,12 @@ export default class InteractionService {
 
     const yRotation = rotation.y - angleDelta;
 
-    // Move both: X and Z rotation
     let xRotation = rotation.x;
     let zRotation = rotation.z;
 
     const centerPoint = new Vector3(
-      (touch1.clientX + touch2.clientX) / 2,
-      (touch1.clientY + touch2.clientY) / 2,
+      (transformedTouch1.x + transformedTouch2.x) / 2,
+      (transformedTouch1.y + transformedTouch2.y) / 2,
       0
     );
     const prevCenterPoint = this.prevCenterPoint;
@@ -267,7 +379,6 @@ export default class InteractionService {
       zRotation = rotation.z - centerPointDelta.x * 0.01;
     }
 
-    // Update state
     const allowedAxes = this.transformationValidator.getAllowedRotationAxes(
       state.editingObject
     );
