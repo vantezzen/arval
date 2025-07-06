@@ -4,6 +4,7 @@ import Interaction from "./InteractionService";
 import DevelopmentMouseHandler from "./DevelopmentMouseHandler";
 import TouchPointVisualization from "../../components/TouchPointVisualization";
 import { Portal } from "@/components/Portal";
+import { IS_AR_ENABLED } from "../config/static";
 
 /**
  * Based on https://github.com/vantezzen/arpas-fpb/blob/main/src/components/prototypes/UpdateInteraction.tsx
@@ -74,11 +75,14 @@ function InteractionConnector({ interaction }: { interaction: Interaction }) {
     };
   }, [interaction]);
 
-  return (
-    <Portal>
-      <TouchPointVisualization mouseState={mouseState} />
-    </Portal>
-  );
+  if (!IS_AR_ENABLED) {
+    return (
+      <Portal>
+        <TouchPointVisualization mouseState={mouseState} />
+      </Portal>
+    );
+  }
+  return null;
 }
 
 export default InteractionConnector;
