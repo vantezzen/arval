@@ -2,7 +2,7 @@
   "$schema": "https://arval.vantezzen.io/schemas/acs.schema.json",
   "version": 1,
 
-  "name": "Die Pflanze",
+  "name": "The plant",
   "scope": "object",
   "tags": ["plant", "vegetation", "green", "tall", "nature"],
 
@@ -19,7 +19,7 @@
       "action": "allow-only",
       "subject": "intersection",
       "tags": ["plantbed"],
-      "reason": "in einem Pflanzbeet platziert werden, damit es vor Fahrzeugen geschützt ist"
+      "reason": "be inside a plantbed, to ensure proper growth and aesthetics"
     }
   ]
 }

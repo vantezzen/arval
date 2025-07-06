@@ -22,8 +22,8 @@ export default class ErrorMessageService {
     errors: ValidationError[],
     rules: ResolvedRuleset
   ) {
-    const objectName = rules.name || "Das Objekt";
-    return `${objectName} muss ${errors.map((error) => this.formatReason(error.reason)).join(" und ")}.`;
+    const objectName = rules.name || "The object";
+    return `${objectName} must ${errors.map((error) => this.formatReason(error.reason)).join(" und ")}.`;
   }
 
   private formatReason(reason: string) {

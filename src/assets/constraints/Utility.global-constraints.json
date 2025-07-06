@@ -10,7 +10,7 @@
       "subject": "area",
       "appliesToTags": ["plant", "furniture"],
 
-      "reason": "Unter dieser Fläche befinden sich Versorgungsleitungen, die nicht blockiert werden dürfen.",
+      "reason": "Under this area there are pipes that shouldn't be blocked.",
       "reasonType": "full",
 
       "area": {
@@ -30,7 +30,7 @@
       "subject": "area",
       "appliesToTags": ["plant", "furniture"],
 
-      "reason": "An dieser Stelle findet Samstags der Wochenmarkt statt.",
+      "reason": "There is a market on saturdays at this position.",
       "reasonType": "full",
 
       "area": {

@@ -10,7 +10,7 @@
       "subject": "area",
       "appliesToTags": ["plant", "furniture"],
 
-      "reason": "Die Feuerwehr benötigt diese Fläche als Wendekreis.",
+      "reason": "Firetrucks need this area to turn around.",
       "reasonType": "full",
 
       "area": {
