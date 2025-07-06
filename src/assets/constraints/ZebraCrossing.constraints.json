@@ -1,7 +1,7 @@
 {
   "$schema": "https://arval.vantezzen.io/schemas/acs.schema.json",
   "version": 1,
-  "name": "The zebra crossing",
+  "name": "Der Zebrastreifen",
   "scope": "object",
   "tags": ["zebra-crossing", "crosswalk", "pedestrian", "street", "flat"],
 
@@ -19,14 +19,14 @@
       "subject": "distanceTo",
       "tags": ["street"],
       "distance": 1,
-      "reason": "have a distance below 1 meter to the street, to ensure safety and accessibility"
+      "reason": "maximal 1 Meter von einer Straße entfernt liegen"
     },
     {
       "action": "allow-only",
       "subject": "surface",
       "tags": ["street"],
       "type": "full",
-      "reason": "be placed fully on the street, to ensure proper functionality and visibility"
+      "reason": "vollständig auf einer Straße platziert werden, um die Sicherheit der Fußgänger zu gewährleisten"
     }
   ]
 }

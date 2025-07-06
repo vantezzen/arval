@@ -2,7 +2,7 @@
   "$schema": "https://arval.vantezzen.io/schemas/acs.schema.json",
   "version": 1,
 
-  "name": "The plantbed",
+  "name": "Das Pflanzbeet",
   "scope": "object",
   "tags": ["plantbed", "vegetation", "green", "nature", "tall"],
 
