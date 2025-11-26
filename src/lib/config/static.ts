@@ -1,1 +1,1 @@
-export const IS_AR_ENABLED = true;
+export const IS_AR_ENABLED = false;

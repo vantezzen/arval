@@ -2,8 +2,7 @@ const OBJECTS = {
   bench: {
     name: "Sitzbank",
     id: "bench",
-    model:
-      "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/bench-2/model.gltf",
+    model: "/models/bench.gltf",
   },
   zebraCrossing: {
     name: "Zebrastreifen",
@@ -13,8 +12,7 @@ const OBJECTS = {
   bucket: {
     name: "Blumentopf",
     id: "bucket",
-    model:
-      "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/wood-bucket/model.gltf",
+    model: "/models/bucket.gltf",
   },
   plant: {
     name: "Pflanze",
